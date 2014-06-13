@@ -29,9 +29,11 @@ package de.mud.terminal;
  * Generic display
  */
 public interface VDUDisplay {
-  public void redraw();
-  public void updateScrollBar();
+    public void redraw();
 
-  public void setVDUBuffer(VDUBuffer buffer);
-  public VDUBuffer getVDUBuffer();
+    public void updateScrollBar();
+
+    public void setVDUBuffer(VDUBuffer buffer);
+
+    public VDUBuffer getVDUBuffer();
 }

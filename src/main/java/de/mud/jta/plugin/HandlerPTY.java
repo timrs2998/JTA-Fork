@@ -32,23 +32,26 @@
 package de.mud.jta.plugin;
 
 public class HandlerPTY {
-  public native int start(String cmd);	// open + fork/exec
-  public native void close();
-  public native int read(byte[] b);
-  public native int write(byte[] b);
+    public native int start(String cmd);    // open + fork/exec
 
-  private int fd;
-  boolean good = false;
+    public native void close();
 
-  static {
-    // System.loadLibrary("libutil");	// forkpty on Linux lives in libutil
-    System.loadLibrary("jtapty");
-  }
+    public native int read(byte[] b);
 
-  protected void finalize() throws Throwable {
-    super.finalize();
-    if(good) {
-      close();
+    public native int write(byte[] b);
+
+    private int fd;
+    final boolean good = false;
+
+    static {
+        // System.loadLibrary("libutil");	// forkpty on Linux lives in libutil
+        System.loadLibrary("jtapty");
     }
-  }
+
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (good) {
+            close();
+        }
+    }
 }

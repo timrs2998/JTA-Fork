@@ -30,15 +30,20 @@ package de.mud.jta;
  * to all plugins known and return an answer message immediatly.<P>
  * The functionality is just simuliar to a bus, but depends on the
  * actual implementation of the bus.
- * <P>
+ * <p>
  * <B>Maintainer:</B> Matthias L. Jugel
  *
- * @version $Id: PluginBus.java 499 2005-09-29 08:24:54Z leo $
  * @author Matthias L. Jugel, Marcus Mei�ner
+ * @version $Id: PluginBus.java 499 2005-09-29 08:24:54Z leo $
  */
 public interface PluginBus {
-  /** Broadcast a plugin message to all listeners. */
-  public Object broadcast(PluginMessage message);
-  /** Register a plugin listener with this bus object */
-  public void registerPluginListener(PluginListener listener);
+    /**
+     * Broadcast a plugin message to all listeners.
+     */
+    public Object broadcast(PluginMessage message);
+
+    /**
+     * Register a plugin listener with this bus object
+     */
+    public void registerPluginListener(PluginListener listener);
 }

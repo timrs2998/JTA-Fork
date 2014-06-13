@@ -26,19 +26,22 @@ package de.mud.jta.event;
 
 import de.mud.jta.PluginListener;
 
-import java.awt.Dimension;
-
 /**
  * This is the interface for a online status listener.
- * <P>
+ * <p>
  * <B>Maintainer:</B> Matthias L. Jugel
  *
- * @version $Id: OnlineStatusListener.java 499 2005-09-29 08:24:54Z leo $
  * @author Matthias L. Jugel, Marcus Mei�ner
+ * @version $Id: OnlineStatusListener.java 499 2005-09-29 08:24:54Z leo $
  */
 public interface OnlineStatusListener extends PluginListener {
-  /** Called when the system is online. */
-  public void online();
-  /** Called when the system is offline. */
-  public void offline();
+    /**
+     * Called when the system is online.
+     */
+    public void online();
+
+    /**
+     * Called when the system is offline.
+     */
+    public void offline();
 }

@@ -110,7 +110,7 @@ public class Applet extends JApplet {
     if (pluginLoader == null) {
       try {
         options.load(Applet.class
-                     .getResourceAsStream("/de/mud/jta/default.conf"));
+                     .getResourceAsStream("/default.conf"));
       } catch (Exception e) {
         try {
           URL url = new URL(getCodeBase() + "default.conf");

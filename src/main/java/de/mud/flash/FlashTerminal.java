@@ -140,7 +140,7 @@ public class FlashTerminal implements VDUDisplay, Runnable {
    * Handle XML Commands sent by the remote host.
    * @param xml string containing the xml commands
    */
-  private void handleXMLCommand(String xml) {
+  private void handleXMLCommand(String xml) throws IOException {
     System.err.println("handleXMLCommand(" + xml + ")");
     StringReader src = new StringReader("<root>" + xml.replace('\0', ' ') + "</root>");
     try {
@@ -178,10 +178,15 @@ public class FlashTerminal implements VDUDisplay, Runnable {
     if (terminalReady && writer != null) {
       try {
         // remove children from terminal
-        terminal.removeChildren();
+          for (Object obj : terminal.getChildren()) {
+              Element child = (Element) obj;
+              terminal.removeChild(child.getName());
+              terminal.removeChild(child.getName(), child.getNamespace());
+          }
+
         if (simpleMode) {
           Element result = redrawSimpleTerminal(terminal);
-          if (result.hasChildren()) {
+          if (result.getChildren().size() > 0) {
             xmlOutputter.output(result, writer);
           }
         } else {

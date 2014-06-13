@@ -88,7 +88,7 @@ public class Main {
   public static void main(String args[]) {
     final Properties options = new Properties();
     try {
-      options.load(Main.class.getResourceAsStream("/de/mud/jta/default.conf"));
+      options.load(Main.class.getResourceAsStream("/default.conf"));
     } catch (IOException e) {
       System.err.println("jta: cannot load default.conf");
     }

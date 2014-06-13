@@ -143,8 +143,9 @@ public final class IDEA extends Cipher {
 
     public void setKey(byte[] key) {
         int i, ki = 0, j = 0;
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < 8; i++) {
             key_schedule[i] = ((key[2 * i] & 0xff) << 8) | (key[(2 * i) + 1] & 0xff);
+        }
 
         for (i = 8, j = 0; i < 52; i++) {
             j++;
@@ -205,8 +206,9 @@ public final class IDEA extends Cipher {
             int hi = (ab >>> 16) & 0xffff;
             return ((lo - hi) + ((lo < hi) ? 1 : 0));
         }
-        if (a == 0)
+        if (a == 0) {
             return (1 - b);
+        }
         return (1 - a);
     }
 

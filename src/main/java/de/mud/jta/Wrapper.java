@@ -97,8 +97,9 @@ public class Wrapper {
      */
     public void disconnect() throws IOException {
         logger.log(Level.WARNING, "Wrapper: disconnect()");
-        if (socket != null)
+        if (socket != null) {
             socket.close();
+        }
     }
 
     /**

@@ -75,19 +75,20 @@ public class Common extends PluginLoader {
             String id = null;
             int idx;
             if ((idx = name.indexOf("(")) > 1) {
-                if (name.indexOf(")", idx) > idx)
+                if (name.indexOf(")", idx) > idx) {
                     id = name.substring(idx + 1, name.indexOf(")", idx));
-                else
+                } else {
                     System.err.println("jta: missing ')' for plugin '" + name + "'");
+                }
                 name = name.substring(0, idx);
             }
             logger.log(Level.FINE, "jta: loading plugin '" + name + "'"
-                    + (id != null && id.length() > 0 ?
+                    + (id != null && !id.isEmpty() ?
                     ", ID: '" + id + "'" : ""));
             Plugin plugin = addPlugin(name, id);
             if (plugin == null) {
                 logger.log(Level.SEVERE, "jta: ignoring plugin '" + name + "'"
-                        + (id != null && id.length() > 0 ?
+                        + (id != null && !id.isEmpty() ?
                         ", ID: '" + id + "'" : ""));
                 continue;
             }
@@ -145,8 +146,9 @@ public class Common extends PluginLoader {
      * @return a vector containing the path
      */
     private static Vector getPluginPath(String path) {
-        if (path == null)
+        if (path == null) {
             path = DEFAULT_PATH;
+        }
         return split(path, ':');
     }
 
@@ -158,7 +160,9 @@ public class Common extends PluginLoader {
      * @return an array of strings
      */
     public static Vector split(String s, char separator) {
-        if (s == null) return null;
+        if (s == null) {
+            return null;
+        }
         Vector v = new Vector();
         int old = -1, idx = s.indexOf(separator);
         while (idx >= 0) {

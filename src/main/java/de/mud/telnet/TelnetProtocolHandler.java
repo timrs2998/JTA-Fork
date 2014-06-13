@@ -274,7 +274,9 @@ public abstract class TelnetProtocolHandler {
      */
     public void setWindowSize(int columns, int rows)
             throws IOException {
-        if (debug > 2) System.err.println("sending NAWS");
+        if (debug > 2) {
+            System.err.println("sending NAWS");
+        }
 
         if (receivedDX[TELOPT_NAWS] != DO) {
             System.err.println("not allowed to send NAWS? (DONT NAWS)");
@@ -300,8 +302,9 @@ public abstract class TelnetProtocolHandler {
      */
     private void handle_sb(byte type, byte[] sbdata)
             throws IOException {
-        if (debug > 1)
+        if (debug > 1) {
             System.err.println("TelnetIO.handle_sb(" + type + ")");
+        }
         switch (type) {
             case TELOPT_TTYPE:
                 if (sbdata.length > 0 && sbdata[0] == TELQUAL_SEND) {
@@ -312,7 +315,9 @@ public abstract class TelnetProtocolHandler {
          * more than one terminal type
          */
                     String ttype = getTerminalType();
-                    if (ttype == null) ttype = "dumb";
+                    if (ttype == null) {
+                        ttype = "dumb";
+                    }
                     write(ttype.getBytes());
                     write(IACSE);
                 }
@@ -362,7 +367,9 @@ public abstract class TelnetProtocolHandler {
                             System.arraycopy(nbuf, 0, xbuf, 0, nbufptr);
                             nbuf = xbuf;
                         }
-                        for (byte aCrlf : crlf) nbuf[nbufptr++] = aCrlf;
+                        for (byte aCrlf : crlf) {
+                            nbuf[nbufptr++] = aCrlf;
+                        }
                         break;
                     } else {
                         // copy verbatim in binary mode.
@@ -377,7 +384,9 @@ public abstract class TelnetProtocolHandler {
                             System.arraycopy(nbuf, 0, xbuf, 0, nbufptr);
                             nbuf = xbuf;
                         }
-                        for (byte aCr : cr) nbuf[nbufptr++] = aCr;
+                        for (byte aCr : cr) {
+                            nbuf[nbufptr++] = aCr;
+                        }
                     } else {
                         // copy verbatim in binary mode.
                         nbuf[nbufptr++] = buf[i];
@@ -410,25 +419,28 @@ public abstract class TelnetProtocolHandler {
      * @param nbuf the byte buffer put out after negotiation
      * @return number of bytes processed, 0 for none, and -1 for end of buffer.
      */
-    public int negotiate(byte nbuf[])
+    public int negotiate(byte[] nbuf)
             throws IOException {
         int count = tempbuf.length;
         byte[] buf = tempbuf;
-        byte sendbuf[] = new byte[3];
+        byte[] sendbuf = new byte[3];
         byte b, reply;
         int boffset = 0, noffset = 0;
         boolean dobreak = false;
 
         if (count == 0)    // buffer is empty.
+        {
             return -1;
+        }
 
         while (!dobreak && (boffset < count) && (noffset < nbuf.length)) {
             b = buf[boffset++];
             // of course, byte is a signed entity (-128 -> 127)
             // but apparently the SGI Netscape 3.0 doesn't seem
             // to care and provides happily values up to 255
-            if (b >= 128)
+            if (b >= 128) {
                 b = (byte) ((int) b - 256);
+            }
             if (debug > 2) {
                 Byte B = b;
                 System.err.print("byte: " + B.intValue() + " ");
@@ -438,44 +450,61 @@ public abstract class TelnetProtocolHandler {
                     if (b == IAC) {
                         neg_state = STATE_IAC;
                         dobreak = true; // leave the loop so we can sync.
-                    } else
+                    } else {
                         nbuf[noffset++] = b;
+                    }
                     break;
                 case STATE_IAC:
                     switch (b) {
                         case IAC:
-                            if (debug > 2) System.err.print("IAC ");
+                            if (debug > 2) {
+                                System.err.print("IAC ");
+                            }
                             neg_state = STATE_DATA;
                             nbuf[noffset++] = IAC;
                             break;
                         case WILL:
-                            if (debug > 2) System.err.print("WILL ");
+                            if (debug > 2) {
+                                System.err.print("WILL ");
+                            }
                             neg_state = STATE_IACWILL;
                             break;
                         case WONT:
-                            if (debug > 2) System.err.print("WONT ");
+                            if (debug > 2) {
+                                System.err.print("WONT ");
+                            }
                             neg_state = STATE_IACWONT;
                             break;
                         case DONT:
-                            if (debug > 2) System.err.print("DONT ");
+                            if (debug > 2) {
+                                System.err.print("DONT ");
+                            }
                             neg_state = STATE_IACDONT;
                             break;
                         case DO:
-                            if (debug > 2) System.err.print("DO ");
+                            if (debug > 2) {
+                                System.err.print("DO ");
+                            }
                             neg_state = STATE_IACDO;
                             break;
                         case EOR:
-                            if (debug > 1) System.err.print("EOR ");
+                            if (debug > 1) {
+                                System.err.print("EOR ");
+                            }
                             notifyEndOfRecord();
                             dobreak = true; // leave the loop so we can sync.
                             neg_state = STATE_DATA;
                             break;
                         case SB:
-                            if (debug > 2) System.err.print("SB ");
+                            if (debug > 2) {
+                                System.err.print("SB ");
+                            }
                             neg_state = STATE_IACSB;
                             break;
                         default:
-                            if (debug > 2) System.err.print("<UNKNOWN " + b + " > ");
+                            if (debug > 2) {
+                                System.err.print("<UNKNOWN " + b + " > ");
+                            }
                             neg_state = STATE_DATA;
                             break;
                     }
@@ -483,28 +512,40 @@ public abstract class TelnetProtocolHandler {
                 case STATE_IACWILL:
                     switch (b) {
                         case TELOPT_ECHO:
-                            if (debug > 2) System.err.println("ECHO");
+                            if (debug > 2) {
+                                System.err.println("ECHO");
+                            }
                             reply = DO;
                             setLocalEcho(false);
                             break;
                         case TELOPT_SGA:
-                            if (debug > 2) System.err.println("SGA");
+                            if (debug > 2) {
+                                System.err.println("SGA");
+                            }
                             reply = DO;
                             break;
                         case TELOPT_EOR:
-                            if (debug > 2) System.err.println("EOR");
+                            if (debug > 2) {
+                                System.err.println("EOR");
+                            }
                             reply = DO;
                             break;
                         case TELOPT_BINARY:
-                            if (debug > 2) System.err.println("BINARY");
+                            if (debug > 2) {
+                                System.err.println("BINARY");
+                            }
                             reply = DO;
                             break;
                         default:
-                            if (debug > 2) System.err.println("<UNKNOWN," + b + ">");
+                            if (debug > 2) {
+                                System.err.println("<UNKNOWN," + b + ">");
+                            }
                             reply = DONT;
                             break;
                     }
-                    if (debug > 1) System.err.println("<" + b + ", WILL =" + WILL + ">");
+                    if (debug > 1) {
+                        System.err.println("<" + b + ", WILL =" + WILL + ">");
+                    }
                     if (reply != sentDX[b + 128] || WILL != receivedWX[b + 128]) {
                         sendbuf[0] = IAC;
                         sendbuf[1] = reply;
@@ -518,24 +559,34 @@ public abstract class TelnetProtocolHandler {
                 case STATE_IACWONT:
                     switch (b) {
                         case TELOPT_ECHO:
-                            if (debug > 2) System.err.println("ECHO");
+                            if (debug > 2) {
+                                System.err.println("ECHO");
+                            }
                             setLocalEcho(true);
                             reply = DONT;
                             break;
                         case TELOPT_SGA:
-                            if (debug > 2) System.err.println("SGA");
+                            if (debug > 2) {
+                                System.err.println("SGA");
+                            }
                             reply = DONT;
                             break;
                         case TELOPT_EOR:
-                            if (debug > 2) System.err.println("EOR");
+                            if (debug > 2) {
+                                System.err.println("EOR");
+                            }
                             reply = DONT;
                             break;
                         case TELOPT_BINARY:
-                            if (debug > 2) System.err.println("BINARY");
+                            if (debug > 2) {
+                                System.err.println("BINARY");
+                            }
                             reply = DONT;
                             break;
                         default:
-                            if (debug > 2) System.err.println("<UNKNOWN," + b + ">");
+                            if (debug > 2) {
+                                System.err.println("<UNKNOWN," + b + ">");
+                            }
                             reply = DONT;
                             break;
                     }
@@ -552,24 +603,34 @@ public abstract class TelnetProtocolHandler {
                 case STATE_IACDO:
                     switch (b) {
                         case TELOPT_ECHO:
-                            if (debug > 2) System.err.println("ECHO");
+                            if (debug > 2) {
+                                System.err.println("ECHO");
+                            }
                             reply = WILL;
                             setLocalEcho(true);
                             break;
                         case TELOPT_SGA:
-                            if (debug > 2) System.err.println("SGA");
+                            if (debug > 2) {
+                                System.err.println("SGA");
+                            }
                             reply = WILL;
                             break;
                         case TELOPT_TTYPE:
-                            if (debug > 2) System.err.println("TTYPE");
+                            if (debug > 2) {
+                                System.err.println("TTYPE");
+                            }
                             reply = WILL;
                             break;
                         case TELOPT_BINARY:
-                            if (debug > 2) System.err.println("BINARY");
+                            if (debug > 2) {
+                                System.err.println("BINARY");
+                            }
                             reply = WILL;
                             break;
                         case TELOPT_NAWS:
-                            if (debug > 2) System.err.println("NAWS");
+                            if (debug > 2) {
+                                System.err.println("NAWS");
+                            }
                             Dimension size = getWindowSize();
                             receivedDX[b] = DO;
                             if (size == null) {
@@ -598,7 +659,9 @@ public abstract class TelnetProtocolHandler {
                             write(SE);
                             break;
                         default:
-                            if (debug > 2) System.err.println("<UNKNOWN," + b + ">");
+                            if (debug > 2) {
+                                System.err.println("<UNKNOWN," + b + ">");
+                            }
                             reply = WONT;
                             break;
                     }
@@ -615,24 +678,34 @@ public abstract class TelnetProtocolHandler {
                 case STATE_IACDONT:
                     switch (b) {
                         case TELOPT_ECHO:
-                            if (debug > 2) System.err.println("ECHO");
+                            if (debug > 2) {
+                                System.err.println("ECHO");
+                            }
                             reply = WONT;
                             setLocalEcho(false);
                             break;
                         case TELOPT_SGA:
-                            if (debug > 2) System.err.println("SGA");
+                            if (debug > 2) {
+                                System.err.println("SGA");
+                            }
                             reply = WONT;
                             break;
                         case TELOPT_NAWS:
-                            if (debug > 2) System.err.println("NAWS");
+                            if (debug > 2) {
+                                System.err.println("NAWS");
+                            }
                             reply = WONT;
                             break;
                         case TELOPT_BINARY:
-                            if (debug > 2) System.err.println("BINARY");
+                            if (debug > 2) {
+                                System.err.println("BINARY");
+                            }
                             reply = WONT;
                             break;
                         default:
-                            if (debug > 2) System.err.println("<UNKNOWN," + b + ">");
+                            if (debug > 2) {
+                                System.err.println("<UNKNOWN," + b + ">");
+                            }
                             reply = WONT;
                             break;
                     }
@@ -646,7 +719,9 @@ public abstract class TelnetProtocolHandler {
                     neg_state = STATE_DATA;
                     break;
                 case STATE_IACSBIAC:
-                    if (debug > 2) System.err.println("" + b + " ");
+                    if (debug > 2) {
+                        System.err.println("" + b + " ");
+                    }
                     if (b == IAC) {
                         sbbuf = new byte[0];
                         current_sb = b;
@@ -657,7 +732,9 @@ public abstract class TelnetProtocolHandler {
                     }
                     break;
                 case STATE_IACSB:
-                    if (debug > 2) System.err.println("" + b + " ");
+                    if (debug > 2) {
+                        System.err.println("" + b + " ");
+                    }
                     switch (b) {
                         case IAC:
                             neg_state = STATE_IACSBIAC;
@@ -670,7 +747,9 @@ public abstract class TelnetProtocolHandler {
                     }
                     break;
                 case STATE_IACSBDATA:
-                    if (debug > 2) System.err.println("" + b + " ");
+                    if (debug > 2) {
+                        System.err.println("" + b + " ");
+                    }
                     switch (b) {
                         case IAC:
                             neg_state = STATE_IACSBDATAIAC;
@@ -684,7 +763,9 @@ public abstract class TelnetProtocolHandler {
                     }
                     break;
                 case STATE_IACSBDATAIAC:
-                    if (debug > 2) System.err.println("" + b + " ");
+                    if (debug > 2) {
+                        System.err.println("" + b + " ");
+                    }
                     switch (b) {
                         case IAC:
                             neg_state = STATE_IACSBDATA;
@@ -708,8 +789,9 @@ public abstract class TelnetProtocolHandler {
                     }
                     break;
                 default:
-                    if (debug > 1)
+                    if (debug > 1) {
                         System.err.println("This should not happen: " + neg_state + " ");
+                    }
                     neg_state = STATE_DATA;
                     break;
             }

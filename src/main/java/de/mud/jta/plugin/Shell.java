@@ -28,7 +28,6 @@ package de.mud.jta.plugin;
 import de.mud.jta.FilterPlugin;
 import de.mud.jta.Plugin;
 import de.mud.jta.PluginBus;
-import de.mud.jta.PluginConfig;
 import de.mud.jta.event.ConfigurationListener;
 import de.mud.jta.event.OnlineStatus;
 import de.mud.jta.event.SocketListener;
@@ -101,7 +100,9 @@ public class Shell extends Plugin implements FilterPlugin {
     }
 
     public int read(byte[] b) throws IOException {
-        if (pty == null) return 0;
+        if (pty == null) {
+            return 0;
+        }
         int ret = pty.read(b);
         if (ret <= 0) {
             throw new IOException("EOF on PTY");
@@ -110,6 +111,8 @@ public class Shell extends Plugin implements FilterPlugin {
     }
 
     public void write(byte[] b) throws IOException {
-        if (pty != null) pty.write(b);
+        if (pty != null) {
+            pty.write(b);
+        }
     }
 }

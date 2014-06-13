@@ -119,7 +119,7 @@ public class SwingTerminal extends Component
     /**
      * A list of colors used for representation of the display
      */
-    private Color color[] = {Color.black,
+    private Color[] color = {Color.black,
             Color.red,
             Color.green,
             Color.yellow,
@@ -175,7 +175,7 @@ public class SwingTerminal extends Component
         if (ver >= 1.4) {
             //if (version.startsWith("1.5")) {
             try {
-                Class params[] = new Class[]{boolean.class};
+                Class[] params = new Class[]{boolean.class};
                 SwingTerminal.class.getMethod("setFocusable", params).invoke(this, true);
                 SwingTerminal.class.getMethod("setFocusTraversalKeysEnabled", params).invoke(this, false);
             } catch (Exception e) {
@@ -265,7 +265,9 @@ public class SwingTerminal extends Component
             charHeight = fm.getHeight();
             charDescent = fm.getDescent();
         }
-        if (buffer.update != null) buffer.update[0] = true;
+        if (buffer.update != null) {
+            buffer.update[0] = true;
+        }
         redraw();
     }
 
@@ -289,11 +291,12 @@ public class SwingTerminal extends Component
      * @param raised    a boolean indicating a raised or embossed border
      */
     public void setBorder(int thickness, boolean raised) {
-        if (thickness == 0)
+        if (thickness == 0) {
             insets = null;
-        else
+        } else {
             insets = new Insets(thickness + 1, thickness + 1,
                     thickness + 1, thickness + 1);
+        }
         this.raised = raised;
     }
 
@@ -304,7 +307,9 @@ public class SwingTerminal extends Component
      * @param scrollBar the scroll bar
      */
     public void setScrollbar(JScrollBar scrollBar) {
-        if (scrollBar == null) return;
+        if (scrollBar == null) {
+            return;
+        }
         this.scrollBar = scrollBar;
         this.scrollBar.setValues(buffer.windowBase, buffer.height, 0, buffer.bufSize - buffer.height);
         this.scrollBar.addAdjustmentListener(evt -> buffer.setWindowBase(evt.getValue()));
@@ -321,12 +326,16 @@ public class SwingTerminal extends Component
     }
 
     public void updateScrollBar() {
-        if (scrollBar == null) return;
+        if (scrollBar == null) {
+            return;
+        }
         scrollBar.setValues(buffer.windowBase, buffer.height, 0, buffer.bufSize);
     }
 
     protected void redraw(Graphics g) {
-        if (debug > 0) System.err.println("redraw()");
+        if (debug > 0) {
+            System.err.println("redraw()");
+        }
 
         int xoffset = (super.getSize().width - buffer.width * charWidth) / 2;
         int yoffset = (super.getSize().height - buffer.height * charHeight) / 2;
@@ -359,9 +368,13 @@ public class SwingTerminal extends Component
      */
 
         for (int l = 0; l < buffer.height; l++) {
-            if (!buffer.update[0] && !buffer.update[l + 1]) continue;
+            if (!buffer.update[0] && !buffer.update[l + 1]) {
+                continue;
+            }
             buffer.update[l + 1] = false;
-            if (debug > 2) System.err.println("redraw(): line " + l);
+            if (debug > 2) {
+                System.err.println("redraw(): line " + l);
+            }
             for (int c = 0; c < buffer.width; c++) {
                 int addr = 0;
                 int currAttr = buffer.charAttributes[buffer.windowBase + l][c];
@@ -369,10 +382,12 @@ public class SwingTerminal extends Component
                 fg = darken(getForeground());
                 bg = darken(getBackground());
 
-                if ((currAttr & buffer.COLOR_FG) != 0)
+                if ((currAttr & buffer.COLOR_FG) != 0) {
                     fg = darken(color[((currAttr & buffer.COLOR_FG) >> buffer.COLOR_FG_SHIFT) - 1]);
-                if ((currAttr & buffer.COLOR_BG) != 0)
+                }
+                if ((currAttr & buffer.COLOR_BG) != 0) {
                     bg = darken(darken(color[((currAttr & buffer.COLOR_BG) >> buffer.COLOR_BG_SHIFT) - 1]));
+                }
 
                 if ((currAttr & VDUBuffer.BOLD) != 0) {
                     g.setFont(new Font(normalFont.getName(), Font.BOLD, normalFont.getSize()));
@@ -415,14 +430,16 @@ public class SwingTerminal extends Component
                     g.fillRect(c * charWidth + xoffset, l * charHeight + yoffset,
                             charWidth, charHeight);
                     g.setColor(fg);
-                    if ((currAttr & VDUBuffer.INVISIBLE) == 0)
+                    if ((currAttr & VDUBuffer.INVISIBLE) == 0) {
                         sf.drawChar(g, buffer.charArray[buffer.windowBase + l][c], xoffset + c * charWidth,
                                 l * charHeight + yoffset, charWidth, charHeight);
-                    if ((currAttr & VDUBuffer.UNDERLINE) != 0)
+                    }
+                    if ((currAttr & VDUBuffer.UNDERLINE) != 0) {
                         g.drawLine(c * charWidth + xoffset,
                                 (l + 1) * charHeight - charDescent / 2 + yoffset,
                                 c * charWidth + charWidth + xoffset,
                                 (l + 1) * charHeight - charDescent / 2 + yoffset);
+                    }
                     continue;
                 }
 
@@ -447,16 +464,18 @@ public class SwingTerminal extends Component
                 g.setColor(fg);
 
                 // draw the characters, if not invisible.
-                if ((currAttr & VDUBuffer.INVISIBLE) == 0)
+                if ((currAttr & VDUBuffer.INVISIBLE) == 0) {
                     g.drawChars(buffer.charArray[buffer.windowBase + l], c, addr,
                             c * charWidth + xoffset,
                             (l + 1) * charHeight - charDescent + yoffset);
+                }
 
-                if ((currAttr & VDUBuffer.UNDERLINE) != 0)
+                if ((currAttr & VDUBuffer.UNDERLINE) != 0) {
                     g.drawLine(c * charWidth + xoffset,
                             (l + 1) * charHeight - charDescent / 2 + yoffset,
                             c * charWidth + addr * charWidth + xoffset,
                             (l + 1) * charHeight - charDescent / 2 + yoffset);
+                }
 
                 c += addr - 1;
             }
@@ -470,9 +489,10 @@ public class SwingTerminal extends Component
                                 (l == selectStartLine ? selectEnd.x - selectStartColumn :
                                         selectEnd.x) : buffer.width);
                 if (selectStartColumn != selectEndColumn) {
-                    if (debug > 0)
+                    if (debug > 0) {
                         System.err.println("select(" + selectStartColumn + "-"
                                 + selectEndColumn + ")");
+                    }
                     g.setXORMode(bg);
                     g.fillRect(selectStartColumn * charWidth + xoffset,
                             l * charHeight + yoffset,
@@ -503,11 +523,12 @@ public class SwingTerminal extends Component
             g.setColor(getBackground());
             xoffset--;
             yoffset--;
-            for (int i = insets.top - 1; i >= 0; i--)
+            for (int i = insets.top - 1; i >= 0; i--) {
                 g.draw3DRect(xoffset - i, yoffset - i,
                         charWidth * buffer.width + 1 + i * 2,
                         charHeight * buffer.height + 1 + i * 2,
                         raised);
+            }
         }
         buffer.update[0] = false;
     }
@@ -523,8 +544,9 @@ public class SwingTerminal extends Component
             redraw();
         }
 
-        if (debug > 1)
+        if (debug > 1) {
             System.err.println("Clip region: " + g.getClipBounds());
+        }
 
         g.drawImage(backingStore, 0, 0, this);
     }
@@ -550,9 +572,15 @@ public class SwingTerminal extends Component
     }
 
     public void print(Graphics g) {
-        if (debug > 0) System.err.println("DEBUG: print()");
-        for (int i = 0; i <= buffer.height; i++) buffer.update[i] = true;
-        Color fg = null, bg = null, colorSave[] = null;
+        if (debug > 0) {
+            System.err.println("DEBUG: print()");
+        }
+        for (int i = 0; i <= buffer.height; i++) {
+            buffer.update[i] = true;
+        }
+        Color fg = null;
+        Color bg = null;
+        Color[] colorSave = null;
         if (!colorPrinting) {
             fg = getForeground();
             bg = getBackground();
@@ -596,12 +624,20 @@ public class SwingTerminal extends Component
         int yoffset = (super.getSize().height - buffer.height * charHeight) / 2;
 
         mousepos.x = (evtpt.x - xoffset) / charWidth;
-        if (mousepos.x < 0) mousepos.x = 0;
-        if (mousepos.x >= buffer.width) mousepos.x = buffer.width - 1;
+        if (mousepos.x < 0) {
+            mousepos.x = 0;
+        }
+        if (mousepos.x >= buffer.width) {
+            mousepos.x = buffer.width - 1;
+        }
 
         mousepos.y = (evtpt.y - yoffset) / charHeight;
-        if (mousepos.y < 0) mousepos.y = 0;
-        if (mousepos.y >= buffer.height) mousepos.y = buffer.height - 1;
+        if (mousepos.y < 0) {
+            mousepos.y = 0;
+        }
+        if (mousepos.y >= buffer.height) {
+            mousepos.y = buffer.height - 1;
+        }
 
         return mousepos;
     }
@@ -613,14 +649,16 @@ public class SwingTerminal extends Component
      * @param bg background color or null
      */
     public void setCursorColors(Color fg, Color bg) {
-        if (fg == null)
+        if (fg == null) {
             cursorColorFG = color[COLOR_FG_STD];
-        else
+        } else {
             cursorColorFG = fg;
-        if (bg == null)
+        }
+        if (bg == null) {
             cursorColorBG = color[COLOR_BG_STD];
-        else
+        } else {
             cursorColorBG = bg;
+        }
         repaint();
     }
 
@@ -630,13 +668,14 @@ public class SwingTerminal extends Component
      * @see #setResizeStrategy
      */
     public void setBounds(int x, int y, int w, int h) {
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("VDU: setBounds(" + x + "," + y + "," + w + "," + h + ")");
+        }
 
         super.setBounds(x, y, w, h);
 
         // ignore zero bounds
-        if (x == 00 && y == 0 && w == 0 && h == 0) {
+        if (x == 0 && y == 0 && w == 0 && h == 0) {
             return;
         }
 
@@ -645,8 +684,9 @@ public class SwingTerminal extends Component
             h -= insets.top + insets.bottom;
         }
 
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("VDU: looking for better match for " + normalFont);
+        }
 
         Font tmpFont = normalFont;
         String fontName = tmpFont.getName();
@@ -669,20 +709,22 @@ public class SwingTerminal extends Component
                         charHeight));
 
                 // adapt current font size (from small up to best fit)
-                if (fm.getHeight() < height || fm.charWidth('@') < width)
+                if (fm.getHeight() < height || fm.charWidth('@') < width) {
                     do {
                         fm = getFontMetrics(normalFont = new Font(fontName, fontStyle,
                                 ++charHeight));
                     } while (fm.getHeight() < height || fm.charWidth('@') < width);
+                }
 
                 // now check if we got a font that is too large
-                if (fm.getHeight() > height || fm.charWidth('@') > width)
+                if (fm.getHeight() > height || fm.charWidth('@') > width) {
                     do {
                         fm = getFontMetrics(normalFont = new Font(fontName, fontStyle,
                                 --charHeight));
                     } while (charHeight > 1 &&
                             (fm.getHeight() > height ||
                                     fm.charWidth('@') > width));
+                }
 
                 if (charHeight <= 1) {
                     System.err.println("VDU: error during resize, resetting");
@@ -786,9 +828,10 @@ public class SwingTerminal extends Component
 
             if (oldx != x || oldy != y) {
                 buffer.update[0] = true;
-                if (debug > 0)
+                if (debug > 0) {
                     System.err.println("select([" + selectBegin.x + "," + selectBegin.y + "]," +
                             "[" + selectEnd.x + "," + selectEnd.y + "])");
+                }
                 redraw();
             }
         }
@@ -854,12 +897,18 @@ public class SwingTerminal extends Component
             }
             selection = "";
             // fix end.x and end.y, they can get over the border
-            if (selectEnd.x < 0) selectEnd.x = 0;
-            if (selectEnd.y < 0) selectEnd.y = 0;
-            if (selectEnd.y >= buffer.charArray.length)
+            if (selectEnd.x < 0) {
+                selectEnd.x = 0;
+            }
+            if (selectEnd.y < 0) {
+                selectEnd.y = 0;
+            }
+            if (selectEnd.y >= buffer.charArray.length) {
                 selectEnd.y = buffer.charArray.length - 1;
-            if (selectEnd.x > buffer.charArray[0].length)
+            }
+            if (selectEnd.x > buffer.charArray[0].length) {
                 selectEnd.x = buffer.charArray[0].length;
+            }
 
             // Initial buffer space for selectEnd - selectBegin + 1 lines
             // NOTE: Selection includes invisible text as spaces!
@@ -875,32 +924,38 @@ public class SwingTerminal extends Component
                 boolean newlineFound = false;
                 char ch = ' ';
                 for (int i = start; i < end; i++) {
-                    if ((buffer.charAttributes[l][i] & VDUBuffer.INVISIBLE) != 0)
+                    if ((buffer.charAttributes[l][i] & VDUBuffer.INVISIBLE) != 0) {
                         ch = ' ';
-                    else
+                    } else {
                         ch = buffer.charArray[l][i];
-                    if (ch == '\n')
+                    }
+                    if (ch == '\n') {
                         newlineFound = true;
+                    }
                     selectionBuf.append(ch);
                 }
-                if (!newlineFound)
+                if (!newlineFound) {
                     selectionBuf.append('\n');
+                }
                 // Trim all spaces from end of line, like xterm does.
                 selection += ("-" + (selectionBuf.toString())).trim().substring(1);
-                if (end == buffer.charArray[l].length)
+                if (end == buffer.charArray[l].length) {
                     selection += "\n";
+                }
             }
         }
     }
 
     public void keyTyped(KeyEvent e) {
-        if (buffer != null && buffer instanceof VDUInput)
+        if (buffer != null && buffer instanceof VDUInput) {
             ((VDUInput) buffer).keyTyped(e.getKeyCode(), e.getKeyChar(), getModifiers(e));
+        }
     }
 
     public void keyPressed(KeyEvent e) {
-        if (buffer != null && buffer instanceof VDUInput)
+        if (buffer != null && buffer instanceof VDUInput) {
             ((VDUInput) buffer).keyPressed(e.getKeyCode(), e.getKeyChar(), getModifiers(e));
+        }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -964,7 +1019,7 @@ public class SwingTerminal extends Component
      */
     public void processMouseEvent(MouseEvent evt) {
         // handle simple mouse events
-        if (mouseListener != null)
+        if (mouseListener != null) {
             switch (evt.getID()) {
                 case MouseEvent.MOUSE_CLICKED:
                     mouseListener.mouseClicked(evt);
@@ -982,6 +1037,7 @@ public class SwingTerminal extends Component
                     mouseListener.mouseReleased(evt);
                     break;
             }
+        }
         super.processMouseEvent(evt);
     }
 
@@ -993,7 +1049,7 @@ public class SwingTerminal extends Component
      */
     public void processMouseMotionEvent(MouseEvent evt) {
         // handle mouse motion events
-        if (mouseMotionListener != null)
+        if (mouseMotionListener != null) {
             switch (evt.getID()) {
                 case MouseEvent.MOUSE_DRAGGED:
                     mouseMotionListener.mouseDragged(evt);
@@ -1002,6 +1058,7 @@ public class SwingTerminal extends Component
                     mouseMotionListener.mouseMoved(evt);
                     break;
             }
+        }
         super.processMouseMotionEvent(evt);
     }
 
@@ -1035,7 +1092,7 @@ public class SwingTerminal extends Component
      * @param evt the dispatched key event
      */
     public void processKeyEvent(KeyEvent evt) {
-        if (keyListener != null)
+        if (keyListener != null) {
             switch (evt.getID()) {
                 case KeyEvent.KEY_PRESSED:
                     keyListener.keyPressed(evt);
@@ -1047,9 +1104,11 @@ public class SwingTerminal extends Component
                     keyListener.keyTyped(evt);
                     break;
             }
+        }
         // consume TAB keys if they originate from our component
-        if (evt.getKeyCode() == KeyEvent.VK_TAB && evt.getSource() == this)
+        if (evt.getKeyCode() == KeyEvent.VK_TAB && evt.getSource() == this) {
             evt.consume();
+        }
         super.processKeyEvent(evt);
     }
 
@@ -1064,7 +1123,7 @@ public class SwingTerminal extends Component
     }
 
     public void processFocusEvent(FocusEvent evt) {
-        if (focusListener != null)
+        if (focusListener != null) {
             switch (evt.getID()) {
                 case FocusEvent.FOCUS_GAINED:
                     focusListener.focusGained(evt);
@@ -1073,6 +1132,7 @@ public class SwingTerminal extends Component
                     focusListener.focusLost(evt);
                     break;
             }
+        }
         super.processFocusEvent(evt);
     }
 

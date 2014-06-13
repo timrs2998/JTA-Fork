@@ -1073,8 +1073,9 @@ public class SoftFont {
 
     public SoftFont() {
         font = new java.util.Hashtable();
-        for (int i = 0; i < fontdata.length; i++)
+        for (int i = 0; i < fontdata.length; i++) {
             font.put((int) fontdata[i][0], i);
+        }
 
     }
 
@@ -1094,8 +1095,9 @@ public class SoftFont {
         int w, h, entry, i, fontwidth, fontheight;
 
         Ientry = font.get(new Integer(c));
-        if (Ientry == null)
+        if (Ientry == null) {
             return;
+        }
         entry = (Integer) Ientry;
         fontwidth = fontdata[entry][SF_WIDTH];
         fontheight = fontdata[entry][SF_HEIGHT];

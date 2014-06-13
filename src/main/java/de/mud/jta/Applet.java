@@ -96,7 +96,9 @@ public class Applet extends JApplet {
      * do initializations for the plugins and the applet.
      */
     public void init() {
-        if (debug > 0) System.err.println("Applet: init()");
+        if (debug > 0) {
+            System.err.println("Applet: init()");
+        }
         if (pluginLoader == null) {
             try {
                 options.load(Applet.class
@@ -131,7 +133,7 @@ public class Applet extends JApplet {
 
                 if (url != null) {
                     try {
-                        appletParams.load(Applet.class.getResourceAsStream("/de/mud/jta/" + value));
+                        appletParams.load(Applet.class.getResourceAsStream(value));
                         Enumeration ape = appletParams.keys();
                         while (ape.hasMoreElements()) {
                             String key = (String) ape.nextElement();
@@ -160,25 +162,30 @@ public class Applet extends JApplet {
 
             // set the host to our code base, no other hosts are allowed anyway
             host = options.getProperty("Socket.host");
-            if (host == null)
+            if (host == null) {
                 host = getCodeBase().getHost();
+            }
             port = options.getProperty("Socket.port");
-            if (port == null)
+            if (port == null) {
                 port = "23";
+            }
 
-            if ((Boolean.parseBoolean(options.getProperty("Applet.connect"))))
+            if ((Boolean.parseBoolean(options.getProperty("Applet.connect")))) {
                 connect = true;
-            if (!(Boolean.parseBoolean(options.getProperty("Applet.disconnect"))))
+            }
+            if (!(Boolean.parseBoolean(options.getProperty("Applet.disconnect")))) {
                 disconnect = false;
+            }
 
-            if (!(Boolean.parseBoolean(options.getProperty("Applet.disconnect.closeWindow"))))
+            if (!(Boolean.parseBoolean(options.getProperty("Applet.disconnect.closeWindow")))) {
                 disconnectCloseWindow = false;
+            }
 
             frameTitle = options.getProperty("Applet.detach.title");
 
-            if (new Boolean(options.getProperty("Applet.detach"))) {
+            if (Boolean.valueOf(options.getProperty("Applet.detach"))) {
                 if (frameTitle == null) {
-                    appletFrame = new JFrame("jta: " + host + (port.equals("23") ? "" : " " + port));
+                    appletFrame = new JFrame("jta: " + host + ("23".equals(port) ? "" : " " + port));
                 } else {
                     appletFrame = new JFrame(frameTitle);
                 }
@@ -221,7 +228,7 @@ public class Applet extends JApplet {
                     System.err.println("Applet: This is not Netscape ...");
                 }
 
-                if (privilegeManager != null && enable != null && privileges != null)
+                if (privilegeManager != null && enable != null && privileges != null) {
                     for (int i = 0; i < privileges.size(); i++)
                         try {
                             enable.invoke(privilegeManager,
@@ -233,6 +240,7 @@ public class Applet extends JApplet {
                             System.err.println("Applet: access for '" +
                                     privileges.elementAt(i) + "' denied");
                         }
+                }
 
                 // set up the clipboard
                 try {
@@ -251,18 +259,20 @@ public class Applet extends JApplet {
                 }
 
                 if ((Boolean.parseBoolean(options.getProperty("Applet.detach.immediately")))) {
-                    if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen"))))
+                    if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen")))) {
                         ((JFrame) appletFrame)
                                 .setSize(appletFrame.getContentPane().getToolkit().getScreenSize());
-                    else
+                    } else {
                         ((JFrame) appletFrame).pack();
+                    }
 
-                    ((JFrame) appletFrame).show();
+                    ((JFrame) appletFrame).setVisible(true);
                     pluginLoader.broadcast(new SocketRequest(host, Integer.parseInt(port)));
                     pluginLoader.broadcast(new ReturnFocusRequest());
                     close.setLabel(startText != null ? stopText : "Disconnect");
-                } else
+                } else {
                     close.setLabel(startText != null ? startText : "Connect");
+                }
 
                 close.addActionListener(evt -> {
                     if (((JFrame) appletFrame).isVisible()) {
@@ -270,17 +280,20 @@ public class Applet extends JApplet {
                         ((JFrame) appletFrame).setVisible(false);
                         close.setLabel(startText != null ? startText : "Connect");
                     } else {
-                        if (frameTitle == null)
+                        if (frameTitle == null) {
                             ((JFrame) appletFrame)
-                                    .setTitle("jta: " + host + (port.equals("23") ? "" : " " + port));
-                        if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen"))))
+                                    .setTitle("jta: " + host + ("23".equals(port) ? "" : " " + port));
+                        }
+                        if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen")))) {
                             ((JFrame) appletFrame)
                                     .setSize(appletFrame.getContentPane().getToolkit().getScreenSize());
-                        else
+                        } else {
                             ((JFrame) appletFrame).pack();
-                        ((JFrame) appletFrame).show();
-                        if (port == null || port.length() <= 0)
+                        }
+                        ((JFrame) appletFrame).setVisible(true);
+                        if (port == null || port.length() <= 0) {
                             port = "23";
+                        }
                         getAppletContext().showStatus("Trying " + host + " " + port + " ...");
                         pluginLoader.broadcast(new SocketRequest(host,
                                 Integer.parseInt(port)));
@@ -327,17 +340,21 @@ public class Applet extends JApplet {
                 edit.setShortcut(new MenuShortcut(KeyEvent.VK_E, true));
                 edit.add(tmp = new MenuItem("Copy"));
                 tmp.addActionListener(evt -> {
-                    if (debug > 2)
+                    if (debug > 2) {
                         System.err.println("Applet: copy: " + focussedPlugin);
-                    if (focussedPlugin instanceof VisualTransferPlugin)
+                    }
+                    if (focussedPlugin instanceof VisualTransferPlugin) {
                         ((VisualTransferPlugin) focussedPlugin).copy(clipboard);
+                    }
                 });
                 edit.add(tmp = new MenuItem("Paste"));
                 tmp.addActionListener(evt -> {
-                    if (debug > 2)
+                    if (debug > 2) {
                         System.err.println("Applet: paste: " + focussedPlugin);
-                    if (focussedPlugin instanceof VisualTransferPlugin)
+                    }
+                    if (focussedPlugin instanceof VisualTransferPlugin) {
                         ((VisualTransferPlugin) focussedPlugin).paste(clipboard);
+                    }
                 });
                 mb.add(edit);
 
@@ -345,7 +362,9 @@ public class Applet extends JApplet {
                 for (Object o1 : menuList.keySet()) {
                     String name = (String) o1;
                     Object o = menuList.get(name);
-                    if (o instanceof Menu) mb.add((Menu) o);
+                    if (o instanceof Menu) {
+                        mb.add((Menu) o);
+                    }
                 }
 
                 Menu help = new Menu("Help");
@@ -355,8 +374,9 @@ public class Applet extends JApplet {
                 mb.setHelpMenu(help);
 
                 // only add the menubar if the property is true
-                if ((Boolean.parseBoolean(options.getProperty("Applet.detach.menuBar"))))
+                if ((Boolean.parseBoolean(options.getProperty("Applet.detach.menuBar")))) {
                     ((JFrame) appletFrame).setMenuBar(mb);
+                }
 
                 // add window closing event handler
                 try {
@@ -374,14 +394,19 @@ public class Applet extends JApplet {
 
                 pluginLoader.registerPluginListener(new OnlineStatusListener() {
                     public void online() {
-                        if (debug > 0) System.err.println("Terminal: online");
+                        if (debug > 0) {
+                            System.err.println("Terminal: online");
+                        }
                         online = true;
-                        if (((JFrame) appletFrame).isVisible() == false)
+                        if (((JFrame) appletFrame).isVisible() == false) {
                             ((JFrame) appletFrame).setVisible(true);
+                        }
                     }
 
                     public void offline() {
-                        if (debug > 0) System.err.println("Terminal: offline");
+                        if (debug > 0) {
+                            System.err.println("Terminal: offline");
+                        }
                         online = false;
                         if (disconnectCloseWindow) {
                             ((JFrame) appletFrame).setVisible(false);
@@ -393,31 +418,39 @@ public class Applet extends JApplet {
                 // register a focus status listener, so we know when a plugin got focus
                 pluginLoader.registerPluginListener(new FocusStatusListener() {
                     public void pluginGainedFocus(Plugin plugin) {
-                        if (Applet.debug > 0)
+                        if (Applet.debug > 0) {
                             System.err.println("Applet: " + plugin + " got focus");
+                        }
                         focussedPlugin = plugin;
                     }
 
                     public void pluginLostFocus(Plugin plugin) {
                         // we ignore the lost focus
-                        if (Applet.debug > 0)
+                        if (Applet.debug > 0) {
                             System.err.println("Applet: " + plugin + " lost focus");
+                        }
                     }
                 });
 
             } else
                 // if we have no external frame use this online status listener
+            {
                 pluginLoader.registerPluginListener(new OnlineStatusListener() {
                     public void online() {
-                        if (debug > 0) System.err.println("Terminal: online");
+                        if (debug > 0) {
+                            System.err.println("Terminal: online");
+                        }
                         online = true;
                     }
 
                     public void offline() {
-                        if (debug > 0) System.err.println("Terminal: offline");
+                        if (debug > 0) {
+                            System.err.println("Terminal: offline");
+                        }
                         online = false;
                     }
                 });
+            }
 
 
         }
@@ -428,7 +461,9 @@ public class Applet extends JApplet {
      */
     public void start() {
         if (!online && (appletFrame == this || connect)) {
-            if (debug > 0) System.err.println("start(" + host + ", " + port + ")");
+            if (debug > 0) {
+                System.err.println("start(" + host + ", " + port + ")");
+            }
             getAppletContext().showStatus("Trying " + host + " " + port + " ...");
             pluginLoader.broadcast(new SocketRequest(host, Integer.parseInt(port)));
             pluginLoader.broadcast(new ReturnFocusRequest());
@@ -440,7 +475,9 @@ public class Applet extends JApplet {
      */
     public void stop() {
         if (online && disconnect) {
-            if (debug > 0) System.err.println("stop()");
+            if (debug > 0) {
+                System.err.println("stop()");
+            }
             pluginLoader.broadcast(new SocketRequest());
         }
     }

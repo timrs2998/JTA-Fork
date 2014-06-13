@@ -29,6 +29,7 @@ import de.mud.jta.Wrapper;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * The telnet ssh is a sample class for how to use the SSH protocol
@@ -96,7 +97,7 @@ public class SshWrapper extends Wrapper {
      * @return output of the command or null if no prompt is set
      */
     public String send(String cmd) throws IOException {
-        byte arr[];
+        byte[] arr;
         arr = (cmd + "\n").getBytes();
         // no write until authorization is done
         for (int i = 0; i < arr.length; i++) {
@@ -107,8 +108,9 @@ public class SshWrapper extends Wrapper {
             }
         }
         handler.sendData(new String(arr));
-        if (getPrompt() != null)
+        if (getPrompt() != null) {
             return waitfor(getPrompt());
+        }
         return null;
     }
 
@@ -138,8 +140,9 @@ public class SshWrapper extends Wrapper {
             System.arraycopy(buffer, pos, b, 0, amount);
             if (pos + amount < buffer.length) {
                 pos += amount;
-            } else
+            } else {
                 buffer = null;
+            }
             return amount;
         }
 
@@ -150,12 +153,14 @@ public class SshWrapper extends Wrapper {
             System.arraycopy(b, 0, tmp, 0, n);
             pos = 0;
             buffer = handler.handleSSH(tmp);
-            if (debug > 0 && buffer != null && buffer.length > 0)
-                System.err.println("ssh: " + buffer);
+            if (debug > 0 && buffer != null && buffer.length > 0) {
+                System.err.println("ssh: " + Arrays.toString(buffer));
+            }
 
             if (buffer != null && buffer.length > 0) {
-                if (debug > 0)
+                if (debug > 0) {
                     System.err.println("ssh: incoming=" + n + " now=" + buffer.length);
+                }
                 int amount = buffer.length <= b.length ? buffer.length : b.length;
                 System.arraycopy(buffer, 0, b, 0, amount);
                 pos = n = amount;
@@ -163,8 +168,9 @@ public class SshWrapper extends Wrapper {
                     buffer = null;
                     pos = 0;
                 }
-            } else
+            } else {
                 return 0;
+            }
         }
         return n;
     }

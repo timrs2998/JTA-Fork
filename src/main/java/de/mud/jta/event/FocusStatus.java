@@ -57,7 +57,7 @@ public class FocusStatus implements PluginMessage {
      * @return null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof FocusStatusListener)
+        if (pl instanceof FocusStatusListener) {
             switch (event.getID()) {
                 case FocusEvent.FOCUS_GAINED:
                     ((FocusStatusListener) pl).pluginGainedFocus(plugin);
@@ -65,6 +65,7 @@ public class FocusStatus implements PluginMessage {
                 case FocusEvent.FOCUS_LOST:
                     ((FocusStatusListener) pl).pluginLostFocus(plugin);
             }
+        }
         return null;
     }
 }

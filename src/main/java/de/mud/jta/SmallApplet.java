@@ -78,7 +78,9 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
      * do initializations for the plugins and the applet.
      */
     public void init() {
-        if (debug > 0) System.err.println("jta: init()");
+        if (debug > 0) {
+            System.err.println("jta: init()");
+        }
 
         host = getParameter("host");
         port = getParameter("port");
@@ -90,8 +92,9 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
             /** before sending data transform it using telnet (which is sending it) */
             public void write(byte[] b) {
                 try {
-                    if (localecho)
+                    if (localecho) {
                         emulation.putString(new String(b));
+                    }
                     telnet.transpose(b);
                 } catch (IOException e) {
                     System.err.println("jta: error sending data: " + e);
@@ -141,10 +144,13 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
      * Start the applet. Connect to the remote host.
      */
     public void start() {
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("jta: start()");
+        }
         // disconnect if we are already connected
-        if (socket != null) stop();
+        if (socket != null) {
+            stop();
+        }
 
         try {
             // open new socket and get streams
@@ -166,8 +172,9 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
      * Stop the applet and disconnect.
      */
     public void stop() {
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("jta: stop()");
+        }
         // when applet stops, disconnect
         if (socket != null) {
             try {
@@ -189,11 +196,12 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
      * Continuously read from remote host and display the data on screen.
      */
     public void run() {
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("jta: run()");
+        }
         byte[] b = new byte[256];
         int n = 0;
-        while (running && n >= 0)
+        while (running && n >= 0) {
             try {
                 do {
                     n = telnet.negotiate(b);
@@ -207,6 +215,7 @@ public class SmallApplet extends java.applet.Applet implements Runnable {
                 stop();
                 break;
             }
+        }
     }
 
     public void update(Graphics g) {

@@ -91,7 +91,7 @@ public class MUDColorizer extends Plugin
             Properties regexpSet = new Properties();
 
             try {
-                regexpSet.load(getClass().getResourceAsStream(tmp));
+                regexpSet.load(getClass().getResourceAsStream('/' + tmp));
             } catch (Exception e) {
                 try {
                     regexpSet.load(new URL(tmp).openStream());
@@ -174,8 +174,9 @@ public class MUDColorizer extends Plugin
         }
         if (readprompt) {
             int index;
-            for (index = buf.length - 1; index >= 0; index--)
+            for (index = buf.length - 1; index >= 0; index--) {
                 if (buf[index] == '\n') break;
+            }
             index++;
             prompt = new byte[buf.length - index];
             System.arraycopy(buf, index, prompt, 0, buf.length - index);
@@ -235,8 +236,12 @@ public class MUDColorizer extends Plugin
     /* /Colorhandling */
 
     /* Prompthandling II */
-        if (buf[buf.length - 1] == '\n') writeprompt = true;
-        if (buf[buf.length - 1] == '\r') writeprompt = true;
+        if (buf[buf.length - 1] == '\n') {
+            writeprompt = true;
+        }
+        if (buf[buf.length - 1] == '\r') {
+            writeprompt = true;
+        }
         if (writeprompt && prompt != null && prompt.length > 0) {
             // "rewrite"
             nbuf[nbufptr++] = (byte) '\r';
@@ -297,8 +302,9 @@ public class MUDColorizer extends Plugin
                     buffer = null;
                     pos = 0;
                 }
-            } else
+            } else {
                 return 0;
+            }
         }
         return n;
     }

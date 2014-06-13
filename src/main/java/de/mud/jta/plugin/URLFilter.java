@@ -30,12 +30,8 @@ import de.mud.jta.event.AppletListener;
 import de.mud.jta.event.ConfigurationListener;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.applet.AppletContext;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import java.util.Vector;
@@ -98,7 +94,9 @@ public class URLFilter extends Plugin
         b = new JButton("Show URL");
         b.addActionListener(evt -> {
             String item = (String) urlList.getSelectedValue();
-            if (item != null) showURL(item);
+            if (item != null) {
+                showURL(item);
+            }
         });
         p.add(b);
         urlPanel.add("East", p);
@@ -170,15 +168,17 @@ public class URLFilter extends Plugin
                             String url = word + ":/";
                             // collect the test of the url
                             while ((token = st.nextToken()) == StreamTokenizer.TT_WORD ||
-                                    token == '/')
+                                    token == '/') {
                                 if (token == StreamTokenizer.TT_WORD)
                                     url += st.sval;
                                 else
                                     url += (char) token;
+                            }
 
                             // urls that end with a dot are usually wrong, so cut it off
-                            if (url.endsWith("."))
+                            if (url.endsWith(".")) {
                                 url = url.substring(0, url.length() - 1);
+                            }
 
                             // check for duplicate urls by consulting the urlCache
                             if (!urlCache.contains(url)) {
@@ -242,7 +242,9 @@ public class URLFilter extends Plugin
      */
     public int read(byte[] b) throws IOException {
         int n = source.read(b);
-        if (n > 0) pout.write(b, 0, n);
+        if (n > 0) {
+            pout.write(b, 0, n);
+        }
         return n;
     }
 

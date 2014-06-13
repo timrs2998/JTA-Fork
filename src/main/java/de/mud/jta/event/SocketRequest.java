@@ -62,13 +62,15 @@ public class SocketRequest implements PluginMessage {
      * @return the terminal type or null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof SocketListener) try {
-            if (host != null)
-                ((SocketListener) pl).connect(host, port);
-            else
-                ((SocketListener) pl).disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (pl instanceof SocketListener) {
+            try {
+                if (host != null)
+                    ((SocketListener) pl).connect(host, port);
+                else
+                    ((SocketListener) pl).disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

@@ -139,7 +139,7 @@ public class ButtonBar extends Plugin
             public void setConfiguration(PluginConfig cfg) {
                 String file = cfg.getProperty("ButtonBar", id, "setup");
                 clearFields =
-                        new Boolean(cfg.getProperty("ButtonBar", id, "clearFields"));
+                        Boolean.valueOf(cfg.getProperty("ButtonBar", id, "clearFields"));
 
                 // check for the setup file
                 if (file == null) {
@@ -151,19 +151,20 @@ public class ButtonBar extends Plugin
                 InputStream is = null;
 
                 try {
-                    is = getClass().getResourceAsStream(file);
+                    is = getClass().getResourceAsStream('/' + file);
                 } catch (Exception e) {
                     // ignore any errors here
                 }
 
                 // if the resource access fails, try URL
-                if (is == null)
+                if (is == null) {
                     try {
                         is = new URL(file).openStream();
                     } catch (Exception ue) {
                         ButtonBar.this.error("could not find: " + file);
                         return;
                     }
+                }
 
                 // create a new stream tokenizer to read the file
                 try {
@@ -199,7 +200,7 @@ public class ButtonBar extends Plugin
                                 c.weightx = 0.0;
                                 c.weighty = 0.0;
                                 // keyword found, parse arguments
-                                if (setup.sval.equals("button")) {
+                                if ("button".equals(setup.sval)) {
                                     if ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
                                         String descr = setup.sval;
                                         if ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
@@ -208,18 +209,21 @@ public class ButtonBar extends Plugin
                                             b.addActionListener(ButtonBar.this);
                                             l.setConstraints(b, constraints(c, setup));
                                             panel.add(b);
-                                        } else
+                                        } else {
                                             ButtonBar.this.error(descr + ": missing button command");
-                                    } else
+                                        }
+                                    } else {
                                         ButtonBar.this.error("unexpected end of file");
-                                } else if (setup.sval.equals("label")) {
+                                    }
+                                } else if ("label".equals(setup.sval)) {
                                     if ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
                                         String descr = setup.sval;
                                         JLabel b = new JLabel(descr);
                                         l.setConstraints(b, constraints(c, setup));
                                         panel.add(b);
-                                    } else
+                                    } else {
                                         ButtonBar.this.error("unexpected end of file");
+                                    }
                   /* choice - new stuff added APS 07-dec-2001 for Choice
                    * buttons
                    * Choice info is held in the choices hash. There are two
@@ -230,7 +234,7 @@ public class ButtonBar extends Plugin
                    *    value=user's command
                    */
 
-                                } else if (setup.sval.equals("choice")) {
+                                } else if ("choice".equals(setup.sval)) {
                                     ChoiceCount++;
                                     String ident = "C" + ChoiceCount + ".";
                                     list = new JList();
@@ -260,7 +264,7 @@ public class ButtonBar extends Plugin
                                         }
                                     }
                                     ButtonBar.this.error("choices hash: " + choices);
-                                } else if (setup.sval.equals("input")) {
+                                } else if ("input".equals(setup.sval)) {
                                     if ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
                                         String descr = setup.sval;
                                         if ((token = setup.nextToken()) ==
@@ -268,16 +272,18 @@ public class ButtonBar extends Plugin
                                             int size = (int) setup.nval;
                                             String init = "", command = "";
                                             token = setup.nextToken();
-                                            if (isKeyword(setup.sval))
+                                            if (isKeyword(setup.sval)) {
                                                 setup.pushBack();
-                                            else
+                                            } else {
                                                 command = setup.sval;
+                                            }
                                             token = setup.nextToken();
                                             if (isKeyword(setup.sval)) {
                                                 setup.pushBack();
                                                 init = command;
-                                            } else
+                                            } else {
                                                 init = setup.sval;
+                                            }
                                             JTextField t = new JTextField(init, size);
                                             if (!init.equals(command)) {
                                                 buttons.put(t, command);
@@ -286,10 +292,12 @@ public class ButtonBar extends Plugin
                                             fields.put(descr, t);
                                             l.setConstraints(t, constraints(c, setup));
                                             panel.add(t);
-                                        } else
+                                        } else {
                                             ButtonBar.this.error(descr + ": missing field size");
-                                    } else
+                                        }
+                                    } else {
                                         ButtonBar.this.error("unexpected end of file");
+                                    }
                                 }
                                 break;
                             default:
@@ -307,15 +315,16 @@ public class ButtonBar extends Plugin
     private GridBagConstraints constraints(GridBagConstraints c,
                                            StreamTokenizer setup)
             throws IOException {
-        if (setup.nextToken() == StreamTokenizer.TT_WORD)
-            if (setup.sval.equals("break"))
+        if (setup.nextToken() == StreamTokenizer.TT_WORD) {
+            if ("break".equals(setup.sval))
                 c.gridwidth = GridBagConstraints.REMAINDER;
-            else if (setup.sval.equals("stretch"))
+            else if ("stretch".equals(setup.sval))
                 c.weightx = 1.0;
             else
                 setup.pushBack();
-        else
+        } else {
             setup.pushBack();
+        }
         return c;
     }
 
@@ -325,14 +334,17 @@ public class ButtonBar extends Plugin
             // It's a choice - get the text from the selected item
             JList list = (JList) evt.getSource();
             tmp = (String) choices.get(ident + list.getSelectedValue());
-            if (tmp != null) processEvent(tmp);
+            if (tmp != null) {
+                processEvent(tmp);
+            }
         }
     }
 
     public void actionPerformed(ActionEvent evt) {
         String tmp;
-        if ((tmp = (String) buttons.get(evt.getSource())) != null)
+        if ((tmp = (String) buttons.get(evt.getSource())) != null) {
             processEvent(tmp);
+        }
     }
 
 
@@ -395,7 +407,9 @@ public class ButtonBar extends Plugin
                         break;
                     }
                     cmd += t.getText();
-                    if (clearFields) t.setText("");
+                    if (clearFields) {
+                        t.setText("");
+                    }
                     break;
                 }
                 default:
@@ -404,21 +418,23 @@ public class ButtonBar extends Plugin
             oldidx = ++idx;
         }
 
-        if (oldidx <= tmp.length()) cmd += tmp.substring(oldidx, tmp.length());
+        if (oldidx <= tmp.length()) {
+            cmd += tmp.substring(oldidx, tmp.length());
+        }
 
         if (function != null) {
-            if (function.equals("break")) {
+            if ("break".equals(function)) {
                 bus.broadcast(new TelnetCommandRequest((byte) 243)); // BREAK
                 return;
             }
-            if (function.equals("exit")) {
+            if ("exit".equals(function)) {
                 try {
                     System.exit(0);
                 } catch (Exception e) {
                     error("cannot exit: " + e);
                 }
             }
-            if (function.equals("connect")) {
+            if ("connect".equals(function)) {
                 String address = null;
                 int port = -1;
                 try {
@@ -430,33 +446,38 @@ public class ButtonBar extends Plugin
                         }
                         cmd = cmd.substring(0, idx);
                     }
-                    if (cmd.length() > 0) address = cmd;
-                    if (address != null)
+                    if (!cmd.isEmpty()) {
+                        address = cmd;
+                    }
+                    if (address != null) {
                         if (port != -1)
                             bus.broadcast(new SocketRequest(address, port));
                         else
                             bus.broadcast(new SocketRequest(address, 23));
-                    else
+                    } else {
                         error("connect: no address");
+                    }
                 } catch (Exception e) {
                     error("connect(): failed");
                     e.printStackTrace();
                 }
-            } else if (function.equals("disconnect"))
+            } else if ("disconnect".equals(function)) {
                 bus.broadcast(new SocketRequest());
-            else if (function.equals("detach")) {
+            } else if ("detach".equals(function)) {
                 error("detach not implemented yet");
-            } else
+            } else {
                 error("ERROR: function not implemented: \"" + function + "\"");
+            }
             return;
         }
         // cmd += tmp.substring(oldidx, tmp.length());
-        if (cmd.length() > 0)
+        if (!cmd.isEmpty()) {
             try {
                 write(cmd.getBytes());
             } catch (IOException e) {
                 error("send: " + e);
             }
+        }
     }
 
     public JComponent getPluginVisual() {
@@ -488,12 +509,12 @@ public class ButtonBar extends Plugin
 
     private static boolean isKeyword(String txt) {
         return (
-                txt.equals("button") ||
-                        txt.equals("label") ||
-                        txt.equals("input") ||
-                        txt.equals("stretch") ||
-                        txt.equals("choice") ||
-                        txt.equals("break")
+                "button".equals(txt) ||
+                        "label".equals(txt) ||
+                        "input".equals(txt) ||
+                        "stretch".equals(txt) ||
+                        "choice".equals(txt) ||
+                        "break".equals(txt)
         );
     }
 }

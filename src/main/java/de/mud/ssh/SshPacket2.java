@@ -26,7 +26,6 @@
 package de.mud.ssh;
 
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,7 +42,7 @@ public class SshPacket2 extends SshPacket {
     private final byte[] packet_length_array = new byte[5];                // 4 bytes
     private int packet_length = 0;    // 32-bit sign int
     private int padlen = 0;        // packet length 1 byte unsigned
-    private byte[] crc_array = new byte[4];    // 32-bit crc
+    private final byte[] crc_array = new byte[4];    // 32-bit crc
 
 
     private int position = 0;
@@ -82,7 +81,8 @@ public class SshPacket2 extends SshPacket {
         byte[] mpbytes = bi.toByteArray(), xbytes;
         int i;
 
-        for (i = 0; (i < mpbytes.length) && (mpbytes[i] == 0); i++) /* EMPTY */ ;
+        for (i = 0; (i < mpbytes.length) && (mpbytes[i] == 0); i++) /* EMPTY */ {
+        }
         xbytes = new byte[mpbytes.length - i];
         System.arraycopy(mpbytes, i, xbytes, 0, mpbytes.length - i);
 
@@ -98,22 +98,26 @@ public class SshPacket2 extends SshPacket {
         // crypted data is:
         // packet length [ payloadlen + padlen + type + data ]
         packet_length = 4 + 1 + 1;
-        if (data != null)
+        if (data != null) {
             packet_length += data.length;
+        }
 
         // pad it up to full blocksize.
         // If not crypto, zeroes, otherwise random.
         // (zeros because we do not want to tell the attacker the state of our
         //  random generator)
         int padlen = blocksize - (packet_length % blocksize);
-        if (padlen < 4) padlen += blocksize;
+        if (padlen < 4) {
+            padlen += blocksize;
+        }
 
         byte[] padding = new byte[padlen];
         System.out.println("packet length is " + packet_length + ", padlen is " + padlen);
-        if (xcrypt == null)
+        if (xcrypt == null) {
             for (int i = 0; i < padlen; i++) padding[i] = 0;
-        else
+        } else {
             for (int i = 0; i < padlen; i++) padding[i] = SshMisc.getNotZeroRandomByte();
+        }
 
         // [ packetlength, padlength, padding, packet type, data ]
         byte[] block = new byte[packet_length + padlen];
@@ -150,8 +154,9 @@ public class SshPacket2 extends SshPacket {
             md5sum = new byte[0];
         }
 
-        if (xcrypt != null)
+        if (xcrypt != null) {
             block = xcrypt.encrypt(block);
+        }
 
         byte[] sendblock = new byte[block.length + md5sum.length];
         System.arraycopy(block, 0, sendblock, 0, block.length);
@@ -159,15 +164,17 @@ public class SshPacket2 extends SshPacket {
         return sendblock;
     }
 
-    private byte block[];
+    private byte[] block;
 
-    public byte[] addPayload(byte buff[]) {
+    public byte[] addPayload(byte[] buff) {
         int boffset = 0;
         byte b;
         byte[] newbuf = null;
         int hmaclen = 0;
 
-        if (crypto != null) hmaclen = 16;
+        if (crypto != null) {
+            hmaclen = 16;
+        }
 
         System.out.println("addPayload2 " + buff.length);
 
@@ -208,8 +215,9 @@ public class SshPacket2 extends SshPacket {
                     if (position < block.length) {
                         int amount = buff.length - boffset;
                         if (amount > 0) {
-                            if (amount > block.length - position)
+                            if (amount > block.length - position) {
                                 amount = block.length - position;
+                            }
                             System.arraycopy(buff, boffset, block, position, amount);
                             boffset += amount;
                             position += amount;
@@ -226,10 +234,13 @@ public class SshPacket2 extends SshPacket {
 
                         System.arraycopy(block, 0, decryptedBlock, 0, block.length - hmaclen);
 
-                        if (crypto != null)
+                        if (crypto != null) {
                             decryptedBlock = crypto.decrypt(decryptedBlock);
+                        }
 
-                        for (byte aDecryptedBlock : decryptedBlock) System.out.print(" " + aDecryptedBlock);
+                        for (byte aDecryptedBlock : decryptedBlock) {
+                            System.out.print(" " + aDecryptedBlock);
+                        }
                         System.out.println("");
 
                         setType(decryptedBlock[0]);

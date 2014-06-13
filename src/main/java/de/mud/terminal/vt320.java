@@ -96,7 +96,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     public void setScreenSize(int c, int r, boolean broadcast) {
         int oldrows = getRows(), oldcols = getColumns();
 
-        if (debug > 2) System.err.println("setscreensize (" + c + "," + r + "," + broadcast + ")");
+        if (debug > 2) {
+            System.err.println("setscreensize (" + c + "," + r + "," + broadcast + ")");
+        }
 
         super.setScreenSize(c, r, false);
 
@@ -123,7 +125,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         //setBorder(2, false);
 
         int nw = getColumns();
-        if (nw < 132) nw = 132; //catch possible later 132/80 resizes
+        if (nw < 132) {
+            nw = 132; //catch possible later 132/80 resizes
+        }
         Tabs = new byte[nw];
         for (int i = 0; i < nw; i += 8) {
             Tabs[i] = 1;
@@ -253,22 +257,30 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @param modifiers
      */
     public void mousePressed(int x, int y, int modifiers) {
-        if (mouserpt == 0)
+        if (mouserpt == 0) {
             return;
+        }
 
         int mods = modifiers;
         mousebut = 3;
-        if ((mods & 16) == 16) mousebut = 0;
-        if ((mods & 8) == 8) mousebut = 1;
-        if ((mods & 4) == 4) mousebut = 2;
+        if ((mods & 16) == 16) {
+            mousebut = 0;
+        }
+        if ((mods & 8) == 8) {
+            mousebut = 1;
+        }
+        if ((mods & 4) == 4) {
+            mousebut = 2;
+        }
 
         int mousecode;
-        if (mouserpt == 9)	/* X10 Mouse */
+        if (mouserpt == 9)	/* X10 Mouse */ {
             mousecode = 0x20 | mousebut;
-        else			/* normal xterm mouse reporting */
+        } else			/* normal xterm mouse reporting */ {
             mousecode = mousebut | 0x20 | ((mods & 7) << 2);
+        }
 
-        byte b[] = new byte[6];
+        byte[] b = new byte[6];
 
         b[0] = 27;
         b[1] = (byte) '[';
@@ -289,8 +301,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @param modifiers
      */
     public void mouseReleased(int x, int y, int modifiers) {
-        if (mouserpt == 0)
+        if (mouserpt == 0) {
             return;
+        }
 
     /* problem is tht modifiers still have the released button set in them.
     int mods = modifiers;
@@ -301,12 +314,13 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     */
 
         int mousecode;
-        if (mouserpt == 9)
+        if (mouserpt == 9) {
             mousecode = 0x20 + mousebut;	/* same as press? appears so. */
-        else
+        } else {
             mousecode = '#';
+        }
 
-        byte b[] = new byte[6];
+        byte[] b = new byte[6];
         b[0] = 27;
         b[1] = (byte) '[';
         b[2] = (byte) 'M';
@@ -358,54 +372,95 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @param codes a properties object containing key code definitions
      */
     public void setKeyCodes(Properties codes) {
-        String res, prefixes[] = {"", "S", "C", "A"};
+        String res;
+        String[] prefixes = {"", "S", "C", "A"};
         int i;
 
         for (i = 0; i < 10; i++) {
             res = codes.getProperty("NUMPAD" + i);
-            if (res != null) Numpad[i] = unEscape(res);
+            if (res != null) {
+                Numpad[i] = unEscape(res);
+            }
         }
         for (i = 1; i < 20; i++) {
             res = codes.getProperty("F" + i);
-            if (res != null) FunctionKey[i] = unEscape(res);
+            if (res != null) {
+                FunctionKey[i] = unEscape(res);
+            }
             res = codes.getProperty("SF" + i);
-            if (res != null) FunctionKeyShift[i] = unEscape(res);
+            if (res != null) {
+                FunctionKeyShift[i] = unEscape(res);
+            }
             res = codes.getProperty("CF" + i);
-            if (res != null) FunctionKeyCtrl[i] = unEscape(res);
+            if (res != null) {
+                FunctionKeyCtrl[i] = unEscape(res);
+            }
             res = codes.getProperty("AF" + i);
-            if (res != null) FunctionKeyAlt[i] = unEscape(res);
+            if (res != null) {
+                FunctionKeyAlt[i] = unEscape(res);
+            }
         }
         for (i = 0; i < 4; i++) {
             res = codes.getProperty(prefixes[i] + "PGUP");
-            if (res != null) PrevScn[i] = unEscape(res);
+            if (res != null) {
+                PrevScn[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "PGDOWN");
-            if (res != null) NextScn[i] = unEscape(res);
+            if (res != null) {
+                NextScn[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "END");
-            if (res != null) KeyEnd[i] = unEscape(res);
+            if (res != null) {
+                KeyEnd[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "HOME");
-            if (res != null) KeyHome[i] = unEscape(res);
+            if (res != null) {
+                KeyHome[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "INSERT");
-            if (res != null) Insert[i] = unEscape(res);
+            if (res != null) {
+                Insert[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "REMOVE");
-            if (res != null) Remove[i] = unEscape(res);
+            if (res != null) {
+                Remove[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "UP");
-            if (res != null) KeyUp[i] = unEscape(res);
+            if (res != null) {
+                KeyUp[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "DOWN");
-            if (res != null) KeyDown[i] = unEscape(res);
+            if (res != null) {
+                KeyDown[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "LEFT");
-            if (res != null) KeyLeft[i] = unEscape(res);
+            if (res != null) {
+                KeyLeft[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "RIGHT");
-            if (res != null) KeyRight[i] = unEscape(res);
+            if (res != null) {
+                KeyRight[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "ESCAPE");
-            if (res != null) Escape[i] = unEscape(res);
+            if (res != null) {
+                Escape[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "BACKSPACE");
-            if (res != null) BackSpace[i] = unEscape(res);
+            if (res != null) {
+                BackSpace[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "TAB");
-            if (res != null) TabKey[i] = unEscape(res);
+            if (res != null) {
+                TabKey[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "NUMPLUS");
-            if (res != null) NUMPlus[i] = unEscape(res);
+            if (res != null) {
+                NUMPlus[i] = unEscape(res);
+            }
             res = codes.getProperty(prefixes[i] + "NUMDECIMAL");
-            if (res != null) NUMDot[i] = unEscape(res);
+            if (res != null) {
+                NUMDot[i] = unEscape(res);
+            }
         }
     }
 
@@ -417,7 +472,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     public void setTerminalID(String terminalID) {
         this.terminalID = terminalID;
 
-        if (terminalID.equals("scoansi")) {
+        if ("scoansi".equals(terminalID)) {
             FunctionKey[1] = "\u001b[M";
             FunctionKey[2] = "\u001b[N";
             FunctionKey[3] = "\u001b[O";
@@ -462,23 +517,28 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @param s the string to be sent
      */
     private boolean write(String s, boolean doecho) {
-        if (debug > 2) System.out.println("write(|" + s + "|," + doecho);
+        if (debug > 2) {
+            System.out.println("write(|" + s + "|," + doecho);
+        }
         if (s == null) // aka the empty string.
+        {
             return true;
+        }
     /* NOTE: getBytes() honours some locale, it *CONVERTS* the string.
      * However, we output only 7bit stuff towards the target, and *some*
      * 8 bit control codes. We must not mess up the latter, so we do hand
      * by hand copy.
      */
 
-        byte arr[] = new byte[s.length()];
+        byte[] arr = new byte[s.length()];
         for (int i = 0; i < s.length(); i++) {
             arr[i] = (byte) s.charAt(i);
         }
         write(arr);
 
-        if (doecho)
+        if (doecho) {
             putString(s);
+        }
         return true;
     }
 
@@ -499,7 +559,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
     int Sc, Sr, Sa, Stm, Sbm;
     char Sgr, Sgl;
-    char Sgx[];
+    char[] Sgx;
 
     int insertmode = 0;
     int statusmode = 0;
@@ -678,7 +738,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         while ((idx = tmp.indexOf('\\', oldidx)) >= 0 &&
                 ++idx <= tmp.length()) {
             cmd += tmp.substring(oldidx, idx - 1);
-            if (idx == tmp.length()) return cmd;
+            if (idx == tmp.length()) {
+                return cmd;
+            }
             switch (tmp.charAt(idx)) {
                 case 'b':
                     cmd += "\b";
@@ -704,18 +766,22 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 default:
                     if ((tmp.charAt(idx) >= '0') && (tmp.charAt(idx) <= '9')) {
                         int i;
-                        for (i = idx; i < tmp.length(); i++)
+                        for (i = idx; i < tmp.length(); i++) {
                             if ((tmp.charAt(i) < '0') || (tmp.charAt(i) > '9'))
                                 break;
+                        }
                         cmd += (char) Integer.parseInt(tmp.substring(idx, i));
                         idx = i - 1;
-                    } else
+                    } else {
                         cmd += tmp.substring(idx, ++idx);
+                    }
                     break;
             }
             oldidx = ++idx;
         }
-        if (oldidx <= tmp.length()) cmd += tmp.substring(oldidx);
+        if (oldidx <= tmp.length()) {
+            cmd += tmp.substring(oldidx);
+        }
         return cmd;
     }
 
@@ -726,8 +792,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @param s the string to be sent
      */
     private boolean writeSpecial(String s) {
-        if (s == null)
+        if (s == null) {
             return true;
+        }
         if (((s.length() >= 3) && (s.charAt(0) == 27) && (s.charAt(1) == 'O'))) {
             if (vt52mode) {
                 if ((s.charAt(2) >= 'P') && (s.charAt(2) <= 'S')) {
@@ -757,10 +824,12 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         boolean shift = (modifiers & VDUInput.KEY_SHIFT) != 0;
         boolean alt = (modifiers & VDUInput.KEY_ALT) != 0;
 
-        if (debug > 1) System.out.println("keyPressed(" + keyCode + ", " + (int) keyChar + ", " + modifiers + ")");
+        if (debug > 1) {
+            System.out.println("keyPressed(" + keyCode + ", " + (int) keyChar + ", " + modifiers + ")");
+        }
 
         int xind;
-        String fmap[];
+        String[] fmap;
         xind = 0;
         fmap = FunctionKey;
         if (shift) {
@@ -778,8 +847,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
         switch (keyCode) {
             case KeyEvent.VK_PAUSE:
-                if (shift || control)
+                if (shift || control) {
                     sendTelnetCommand((byte) 243); // BREAK
+                }
                 break;
             case KeyEvent.VK_F1:
                 writeSpecial(fmap[1]);
@@ -844,7 +914,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             case KeyEvent.VK_BACK_SPACE:
                 writeSpecial(BackSpace[xind]);
                 if (localecho) {
-                    if (BackSpace[xind] == "\b") {
+                    if ("\b".equals(BackSpace[xind])) {
                         putString("\b \b"); // make the last char 'deleted'
                     } else {
                         putString(BackSpace[xind]); // echo it
@@ -861,8 +931,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 if (vms && control) {
                     writeSpecial(PF1);
                 }
-                if (!control)
+                if (!control) {
                     numlock = !numlock;
+                }
                 break;
             case KeyEvent.VK_CAPS_LOCK:
                 capslock = !capslock;
@@ -877,7 +948,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     }
 
     public void keyReleased(KeyEvent evt) {
-        if (debug > 1) System.out.println("keyReleased(" + evt + ")");
+        if (debug > 1) {
+            System.out.println("keyReleased(" + evt + ")");
+        }
         // ignore
     }
 
@@ -890,7 +963,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         boolean shift = (modifiers & VDUInput.KEY_SHIFT) != 0;
         boolean alt = (modifiers & VDUInput.KEY_ALT) != 0;
 
-        if (debug > 1) System.out.println("keyTyped(" + keyCode + ", " + (int) keyChar + ", " + modifiers + ")");
+        if (debug > 1) {
+            System.out.println("keyTyped(" + keyCode + ", " + (int) keyChar + ", " + modifiers + ")");
+        }
 
         if (keyChar == '\t') {
             if (shift) {
@@ -916,7 +991,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         if (((keyCode == KeyEvent.VK_ENTER) || (keyChar == 10))
                 && !control) {
             write("\r", false);
-            if (localecho) putString("\r\n"); // bad hack
+            if (localecho) {
+                putString("\r\n"); // bad hack
+            }
             return;
         }
 
@@ -931,17 +1008,19 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         // codes.  -Marcus
         // if(((!vms && keyChar == '2') || keyChar == '@' || keyChar == ' ')
         //    && control)
-        if (((!vms && keyChar == '2') || keyChar == ' ') && control)
+        if (((!vms && keyChar == '2') || keyChar == ' ') && control) {
             write("" + (char) 0);
+        }
 
         if (vms) {
             if (keyChar == 127 && !control) {
-                if (shift)
+                if (shift) {
                     writeSpecial(Insert[0]);        //  VMS shift delete = insert
-                else
+                } else {
                     writeSpecial(Remove[0]);        //  VMS delete = remove
+                }
                 return;
-            } else if (control)
+            } else if (control) {
                 switch (keyChar) {
                     case '0':
                         writeSpecial(Numpad[0]);
@@ -996,6 +1075,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                     default:
                         break;
                 }
+            }
       /* Now what does this do and how did it get here. -Marcus
       if (shift && keyChar < 32) {
         write(PF1+(char)(keyChar + 64));
@@ -1005,7 +1085,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         }
 
         // FIXME: not used?
-        String fmap[];
+        String[] fmap;
         int xind;
         xind = 0;
         fmap = FunctionKey;
@@ -1027,7 +1107,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             return;
         }
 
-        if ((modifiers & VDUInput.KEY_ACTION) != 0)
+        if ((modifiers & VDUInput.KEY_ACTION) != 0) {
             switch (keyCode) {
                 case KeyEvent.VK_NUMPAD0:
                     writeSpecial(Numpad[0]);
@@ -1066,6 +1146,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                     writeSpecial(NUMPlus[xind]);
                     return;
             }
+        }
 
         if (!((keyChar == 8) || (keyChar == 127) || (keyChar == '\r') || (keyChar == '\n'))) {
             write("" + keyChar);
@@ -1081,7 +1162,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         System.out.println("OSC: " + osc);
     }
 
-    private final static char unimap[] = {
+    private final static char[] unimap = {
             //#
             //#    Name:     cp437_DOSLatinUS to Unicode table
             //#    Unicode version: 1.1
@@ -1359,8 +1440,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     };
 
     public char map_cp850_unicode(char x) {
-        if (x >= 0x100)
+        if (x >= 0x100) {
             return x;
+        }
         return unimap[x];
     }
 
@@ -1375,7 +1457,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             R += tm;
             maxr = getBottomMargin();
         }
-        if (R > maxr) R = maxr;
+        if (R > maxr) {
+            R = maxr;
+        }
     }
 
     private void putChar(char c, boolean doshowcursor) {
@@ -1386,12 +1470,14 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         // byte msg[];
         boolean mapped = false;
 
-        if (debug > 4)
+        if (debug > 4) {
             System.out.println("putChar(" + c + " [" + ((int) c) + "]) at R=" + R + " , C=" + C + ", columns=" + columns + ", rows=" + rows);
+        }
         markLine(R, 1);
         if (c > 255) {
-            if (debug > 0)
+            if (debug > 0) {
                 System.out.println("char > 255:" + (int) c);
+            }
             //return;
         }
 
@@ -1409,36 +1495,44 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                             term_state = TSTATE_OSC;
                             break;
                         case RI:
-                            if (R > tm)
+                            if (R > tm) {
                                 R--;
-                            else
+                            } else {
                                 insertLine(R, 1, SCROLL_DOWN);
-                            if (debug > 1)
+                            }
+                            if (debug > 1) {
                                 System.out.println("RI");
+                            }
                             break;
                         case IND:
-                            if (debug > 2)
+                            if (debug > 2) {
                                 System.out.println("IND at " + R + ", tm is " + tm + ", bm is " + bm);
-                            if (R == bm || R == rows - 1)
+                            }
+                            if (R == bm || R == rows - 1) {
                                 insertLine(R, 1, SCROLL_UP);
-                            else
+                            } else {
                                 R++;
-                            if (debug > 1)
+                            }
+                            if (debug > 1) {
                                 System.out.println("IND (at " + R + " )");
+                            }
                             break;
                         case NEL:
-                            if (R == bm || R == rows - 1)
+                            if (R == bm || R == rows - 1) {
                                 insertLine(R, 1, SCROLL_UP);
-                            else
+                            } else {
                                 R++;
+                            }
                             C = 0;
-                            if (debug > 1)
+                            if (debug > 1) {
                                 System.out.println("NEL (at " + R + " )");
+                            }
                             break;
                         case HTS:
                             Tabs[C] = 1;
-                            if (debug > 1)
+                            if (debug > 1) {
                                 System.out.println("HTS");
+                            }
                             break;
                         case DCS:
                             dcs = "";
@@ -1448,7 +1542,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                             doneflag = false;
                             break;
                     }
-                    if (doneflag) break;
+                    if (doneflag) {
+                        break;
+                    }
                 }
                 switch (c) {
                     case SS3:
@@ -1479,8 +1575,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         break;
                     case '\b': /* 8 */
                         C--;
-                        if (C < 0)
+                        if (C < 0) {
                             C = 0;
+                        }
                         lastwaslf = 0;
                         break;
                     case '\t':
@@ -1494,18 +1591,22 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         C = 0;
                         break;
                     case '\n':
-                        if (debug > 3)
+                        if (debug > 3) {
                             System.out.println("R= " + R + ", bm " + bm + ", tm=" + tm + ", rows=" + rows);
+                        }
                         if (!vms) {
                             if (lastwaslf != 0 && lastwaslf != c)   //  Ray: I do not understand this logic.
+                            {
                                 break;
+                            }
                             lastwaslf = c;
               /*C = 0;*/
                         }
-                        if (R == bm || R >= rows - 1)
+                        if (R == bm || R >= rows - 1) {
                             insertLine(R, 1, SCROLL_UP);
-                        else
+                        } else {
                             R++;
+                        }
                         break;
                     case 7:
                         beep();
@@ -1529,19 +1630,22 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         }
                         lastwaslf = 0;
                         if (c < 32) {
-                            if (c != 0)
+                            if (c != 0) {
                                 if (debug > 0)
                                     System.out.println("TSTATE_DATA char: " + ((int) c));
+                            }
                 /*break; some BBS really want those characters, like hearst etc. */
-                            if (c == 0) /* print 0 ... you bet */
+                            if (c == 0) /* print 0 ... you bet */ {
                                 break;
+                            }
                         }
                         if (C >= columns) {
                             if (wraparound) {
-                                if (R < rows - 1)
+                                if (R < rows - 1) {
                                     R++;
-                                else
+                                } else {
                                     insertLine(R, 1, SCROLL_UP);
+                                }
                                 C = 0;
                             } else {
                                 // cursor stays on last character.
@@ -1556,7 +1660,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                     case '0':
                                         // Remap SCOANSI line drawing to VT100 line drawing chars
                                         // for our SCO using customers.
-                                        if (terminalID.equals("scoansi") || terminalID.equals("ansi")) {
+                                        if ("scoansi".equals(terminalID) || "ansi".equals(terminalID)) {
                                             for (int i = 0; i < scoansi_acs.length(); i += 2) {
                                                 if (c == scoansi_acs.charAt(i)) {
                                                     c = scoansi_acs.charAt(i + 1);
@@ -1601,8 +1705,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                 }
                             }
                         }
-                        if (!mapped && useibmcharset)
+                        if (!mapped && useibmcharset) {
                             c = map_cp850_unicode(c);
+                        }
 
               /*if(true || (statusmode == 0)) { */
                         if (insertmode == 1) {
@@ -1671,7 +1776,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         gr = 1;  // default GR to G1
             /* reset tabs */
                         int nw = getColumns();
-                        if (nw < 132) nw = 132;
+                        if (nw < 132) {
+                            nw = 132;
+                        }
                         Tabs = new byte[nw];
                         for (int i = 0; i < nw; i += 8) {
                             Tabs[i] = 1;
@@ -1696,65 +1803,83 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         break;
                     case 'A': /* CUU */
                         R--;
-                        if (R < 0) R = 0;
+                        if (R < 0) {
+                            R = 0;
+                        }
                         break;
                     case 'B': /* CUD */
                         R++;
-                        if (R > rows - 1) R = rows - 1;
+                        if (R > rows - 1) {
+                            R = rows - 1;
+                        }
                         break;
                     case 'C':
                         C++;
-                        if (C >= columns) C = columns - 1;
+                        if (C >= columns) {
+                            C = columns - 1;
+                        }
                         break;
                     case 'I': // RI
                         insertLine(R, 1, SCROLL_DOWN);
                         break;
                     case 'E': /* NEL */
-                        if (R == bm || R == rows - 1)
+                        if (R == bm || R == rows - 1) {
                             insertLine(R, 1, SCROLL_UP);
-                        else
+                        } else {
                             R++;
+                        }
                         C = 0;
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC E (at " + R + ")");
+                        }
                         break;
                     case 'D': /* IND */
-                        if (R == bm || R == rows - 1)
+                        if (R == bm || R == rows - 1) {
                             insertLine(R, 1, SCROLL_UP);
-                        else
+                        } else {
                             R++;
-                        if (debug > 1)
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC D (at " + R + " )");
+                        }
                         break;
                     case 'J': /* erase to end of screen */
-                        if (R < rows - 1)
+                        if (R < rows - 1) {
                             deleteArea(0, R + 1, columns, rows - R - 1, attributes);
-                        if (C < columns - 1)
+                        }
+                        if (C < columns - 1) {
                             deleteArea(C, R, columns - C, 1, attributes);
+                        }
                         break;
                     case 'K':
-                        if (C < columns - 1)
+                        if (C < columns - 1) {
                             deleteArea(C, R, columns - C, 1, attributes);
+                        }
                         break;
                     case 'M': // RI
                         System.out.println("ESC M : R is " + R + ", tm is " + tm + ", bm is " + bm);
                         if (R > bm) // outside scrolling region
+                        {
                             break;
+                        }
                         if (R > tm) { // just go up 1 line.
                             R--;
                         } else { // scroll down
                             insertLine(R, 1, SCROLL_DOWN);
                         }
             /* else do nothing ; */
-                        if (debug > 2)
+                        if (debug > 2) {
                             System.out.println("ESC M ");
+                        }
                         break;
                     case 'H':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC H at " + C);
+                        }
             /* right border probably ...*/
-                        if (C >= columns)
+                        if (C >= columns) {
                             C = columns - 1;
+                        }
                         Tabs[C] = 1;
                         break;
                     case 'N': // SS2
@@ -1765,16 +1890,18 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         break;
                     case '=':
             /*application keypad*/
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.println("ESC =");
+                        }
                         keypadmode = true;
                         break;
                     case '<': /* vt52 mode off */
                         vt52mode = false;
                         break;
                     case '>': /*normal keypad*/
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.println("ESC >");
+                        }
                         keypadmode = false;
                         break;
                     case '7': /*save cursor, attributes, margins */
@@ -1787,8 +1914,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         System.arraycopy(gx, 0, Sgx, 0, 4);
                         Stm = getTopMargin();
                         Sbm = getBottomMargin();
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC 7");
+                        }
                         break;
                     case '8': /*restore cursor, attributes, margins */
                         C = Sc;
@@ -1799,8 +1927,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         setTopMargin(Stm);
                         setBottomMargin(Sbm);
                         attributes = Sa;
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC 8");
+                        }
                         break;
                     case '(': /* Designate G0 Character set (ISO 2022) */
                         term_state = TSTATE_SETG0;
@@ -1855,10 +1984,12 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 term_state = TSTATE_DATA;
                 break;
             case TSTATE_SETG0:
-                if (c != '0' && c != 'A' && c != 'B' && c != '<')
+                if (c != '0' && c != 'A' && c != 'B' && c != '<') {
                     System.out.println("ESC ( " + c + ": G0 char set?  (" + ((int) c) + ")");
-                else {
-                    if (debug > 2) System.out.println("ESC ( : G0 char set  (" + c + " " + ((int) c) + ")");
+                } else {
+                    if (debug > 2) {
+                        System.out.println("ESC ( : G0 char set  (" + c + " " + ((int) c) + ")");
+                    }
                     gx[0] = c;
                 }
                 term_state = TSTATE_DATA;
@@ -1867,25 +1998,31 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 if (c != '0' && c != 'A' && c != 'B' && c != '<') {
                     System.out.println("ESC ) " + c + " (" + ((int) c) + ") :G1 char set?");
                 } else {
-                    if (debug > 2) System.out.println("ESC ) :G1 char set  (" + c + " " + ((int) c) + ")");
+                    if (debug > 2) {
+                        System.out.println("ESC ) :G1 char set  (" + c + " " + ((int) c) + ")");
+                    }
                     gx[1] = c;
                 }
                 term_state = TSTATE_DATA;
                 break;
             case TSTATE_SETG2:
-                if (c != '0' && c != 'A' && c != 'B' && c != '<')
+                if (c != '0' && c != 'A' && c != 'B' && c != '<') {
                     System.out.println("ESC*:G2 char set?  (" + ((int) c) + ")");
-                else {
-                    if (debug > 2) System.out.println("ESC*:G2 char set  (" + c + " " + ((int) c) + ")");
+                } else {
+                    if (debug > 2) {
+                        System.out.println("ESC*:G2 char set  (" + c + " " + ((int) c) + ")");
+                    }
                     gx[2] = c;
                 }
                 term_state = TSTATE_DATA;
                 break;
             case TSTATE_SETG3:
-                if (c != '0' && c != 'A' && c != 'B' && c != '<')
+                if (c != '0' && c != 'A' && c != 'B' && c != '<') {
                     System.out.println("ESC+:G3 char set?  (" + ((int) c) + ")");
-                else {
-                    if (debug > 2) System.out.println("ESC+:G3 char set  (" + c + " " + ((int) c) + ")");
+                } else {
+                    if (debug > 2) {
+                        System.out.println("ESC+:G3 char set  (" + c + " " + ((int) c) + ")");
+                    }
                     gx[3] = c;
                 }
                 term_state = TSTATE_DATA;
@@ -1893,9 +2030,10 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             case TSTATE_ESCSQUARE:
                 switch (c) {
                     case '8':
-                        for (int i = 0; i < columns; i++)
+                        for (int i = 0; i < columns; i++) {
                             for (int j = 0; j < rows; j++)
                                 putChar(i, j, 'E', 0);
+                        }
                         break;
                     default:
                         System.out.println("ESC # " + c + " not supported.");
@@ -1934,12 +2072,14 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         term_state = TSTATE_DCEQ;
                         break;
                     case 's': // XTERM_SAVE missing!
-                        if (true || debug > 1)
+                        if (true || debug > 1) {
                             System.out.println("ESC [ ? " + DCEvars[0] + " s unimplemented!");
+                        }
                         break;
                     case 'r': // XTERM_RESTORE
-                        if (true || debug > 1)
+                        if (true || debug > 1) {
                             System.out.println("ESC [ ? " + DCEvars[0] + " r");
+                        }
             /* DEC Mode reset */
                         for (int i = 0; i <= DCEvar; i++) {
                             switch (DCEvars[i]) {
@@ -1971,8 +2111,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         }
                         break;
                     case 'h': // DECSET
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.println("ESC [ ? " + DCEvars[0] + " h");
+                        }
             /* DEC Mode set */
                         for (int i = 0; i <= DCEvar; i++) {
                             switch (DCEvars[i]) {
@@ -2024,23 +2165,27 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         // VT (otherwise do not print the line)."
                         switch (DCEvars[0]) {
                             case 1:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI ? 1 i : Print line containing cursor");
+                                }
                                 break;
                             case 4:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI ? 4 i : Start passthrough printing");
+                                }
                                 break;
                             case 5:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI ? 4 i : Stop passthrough printing");
+                                }
                                 break;
                         }
                         break;
                     case 'l':    //DECRST
             /* DEC Mode reset */
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.println("ESC [ ? " + DCEvars[0] + " l");
+                        }
                         for (int i = 0; i <= DCEvar; i++) {
                             switch (DCEvars[i]) {
                                 case 1:  /* Application cursor keys */
@@ -2085,8 +2230,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         }
                         break;
                     case 'n':
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.println("ESC [ ? " + DCEvars[0] + " n");
+                        }
                         switch (DCEvars[0]) {
                             case 15:
                 /* printer? no printer. */
@@ -2184,8 +2330,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
                     default:
                         System.out.print("Unknown ESC [ = ");
-                        for (int i = 0; i <= DCEvar; i++)
+                        for (int i = 0; i <= DCEvar; i++) {
                             System.out.print(DCEvars[i] + ",");
+                        }
                         System.out.println("" + c);
                         break;
                 }
@@ -2252,16 +2399,24 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             /* send (ESC[?61c) */
 
                         String subcode = "";
-                        if (terminalID.equals("vt320")) subcode = "63;";
-                        if (terminalID.equals("vt220")) subcode = "62;";
-                        if (terminalID.equals("vt100")) subcode = "61;";
+                        if ("vt320".equals(terminalID)) {
+                            subcode = "63;";
+                        }
+                        if ("vt220".equals(terminalID)) {
+                            subcode = "62;";
+                        }
+                        if ("vt100".equals(terminalID)) {
+                            subcode = "61;";
+                        }
                         write(ESC + "[?" + subcode + "1;2c", false);
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " c");
+                        }
                         break;
                     case 'q':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " q");
+                        }
                         break;
                     case 'g':
             /* used for tabsets */
@@ -2273,8 +2428,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                 Tabs[C] = 0;
                                 break;
                         }
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " g");
+                        }
                         break;
                     case 'h':
                         switch (DCEvars[0]) {
@@ -2289,8 +2445,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                 System.out.println("unsupported: ESC [ " + DCEvars[0] + " h");
                                 break;
                         }
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " h");
+                        }
                         break;
                     case 'i': // Printer Controller mode.
                         // "Transparent printing sends all output, except the CSI 4 i
@@ -2301,16 +2458,19 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         //  bypassed."
                         switch (DCEvars[0]) {
                             case 0:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI 0 i:  Print Screen, not implemented.");
+                                }
                                 break;
                             case 4:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI 4 i:  Enable Transparent Printing, not implemented.");
+                                }
                                 break;
                             case 5:
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("CSI 4/5 i:  Disable Transparent Printing, not implemented.");
+                                }
                                 break;
                             default:
                                 System.out.println("ESC [ " + DCEvars[0] + " i, unimplemented!");
@@ -2334,95 +2494,119 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                     {
                         int limit;
               /* FIXME: xterm only cares about 0 and topmargin */
-                        if (R > bm)
+                        if (R > bm) {
                             limit = bm + 1;
-                        else if (R >= tm) {
+                        } else if (R >= tm) {
                             limit = tm;
-                        } else
+                        } else {
                             limit = 0;
-                        if (DCEvars[0] == 0)
+                        }
+                        if (DCEvars[0] == 0) {
                             R--;
-                        else
+                        } else {
                             R -= DCEvars[0];
-                        if (R < limit)
+                        }
+                        if (R < limit) {
                             R = limit;
-                        if (debug > 1)
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " A");
+                        }
                         break;
                     }
                     case 'B':    // CUD
             /* cursor down n (1) times */
                     {
                         int limit;
-                        if (R < tm)
+                        if (R < tm) {
                             limit = tm - 1;
-                        else if (R <= bm) {
+                        } else if (R <= bm) {
                             limit = bm;
-                        } else
+                        } else {
                             limit = rows - 1;
-                        if (DCEvars[0] == 0)
-                            R++;
-                        else
-                            R += DCEvars[0];
-                        if (R > limit)
-                            R = limit;
-                        else {
-                            if (debug > 2) System.out.println("Not limited.");
                         }
-                        if (debug > 2) System.out.println("to: " + R);
-                        if (debug > 1)
+                        if (DCEvars[0] == 0) {
+                            R++;
+                        } else {
+                            R += DCEvars[0];
+                        }
+                        if (R > limit) {
+                            R = limit;
+                        } else {
+                            if (debug > 2) {
+                                System.out.println("Not limited.");
+                            }
+                        }
+                        if (debug > 2) {
+                            System.out.println("to: " + R);
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " B (at C=" + C + ")");
+                        }
                         break;
                     }
                     case 'C':
-                        if (DCEvars[0] == 0)
+                        if (DCEvars[0] == 0) {
                             C++;
-                        else
+                        } else {
                             C += DCEvars[0];
-                        if (C > columns - 1)
+                        }
+                        if (C > columns - 1) {
                             C = columns - 1;
-                        if (debug > 1)
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " C");
+                        }
                         break;
                     case 'd': // CVA
                         R = DCEvars[0];
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " d");
+                        }
                         break;
                     case 'D':
-                        if (DCEvars[0] == 0)
+                        if (DCEvars[0] == 0) {
                             C--;
-                        else
+                        } else {
                             C -= DCEvars[0];
-                        if (C < 0) C = 0;
-                        if (debug > 1)
+                        }
+                        if (C < 0) {
+                            C = 0;
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " D");
+                        }
                         break;
                     case 'r': // DECSTBM
                         if (DCEvar > 0)   //  Ray:  Any argument is optional
                         {
                             R = DCEvars[1] - 1;
-                            if (R < 0)
+                            if (R < 0) {
                                 R = rows - 1;
-                            else if (R >= rows) {
+                            } else if (R >= rows) {
                                 R = rows - 1;
                             }
-                        } else
+                        } else {
                             R = rows - 1;
+                        }
                         setBottomMargin(R);
                         if (R >= DCEvars[0]) {
                             R = DCEvars[0] - 1;
-                            if (R < 0)
+                            if (R < 0) {
                                 R = 0;
+                            }
                         }
                         setTopMargin(R);
                         _SetCursor(0, 0);
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [" + DCEvars[0] + " ; " + DCEvars[1] + " r");
+                        }
                         break;
                     case 'G':  /* CUP  / cursor absolute column */
                         C = DCEvars[0];
-                        if (debug > 1) System.out.println("ESC [ " + DCEvars[0] + " G");
+                        if (debug > 1) {
+                            System.out.println("ESC [ " + DCEvars[0] + " G");
+                        }
                         break;
                     case 'H':  /* CUP  / cursor position */
             /* gets 2 arguments */
@@ -2436,54 +2620,68 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             /* gets 2 arguments */
                         R = DCEvars[0] - 1;
                         C = DCEvars[1] - 1;
-                        if (C < 0) C = 0;
-                        if (R < 0) R = 0;
-                        if (debug > 2)
+                        if (C < 0) {
+                            C = 0;
+                        }
+                        if (R < 0) {
+                            R = 0;
+                        }
+                        if (debug > 2) {
                             System.out.println("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " f");
+                        }
                         break;
                     case 'S': /* ind aka 'scroll forward' */
-                        if (DCEvars[0] == 0)
+                        if (DCEvars[0] == 0) {
                             insertLine(rows - 1, SCROLL_UP);
-                        else
+                        } else {
                             insertLine(rows - 1, DCEvars[0], SCROLL_UP);
+                        }
                         break;
                     case 'L':
             /* insert n lines */
-                        if (DCEvars[0] == 0)
+                        if (DCEvars[0] == 0) {
                             insertLine(R, SCROLL_DOWN);
-                        else
+                        } else {
                             insertLine(R, DCEvars[0], SCROLL_DOWN);
-                        if (debug > 1)
+                        }
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + "" + (c) + " (at R " + R + ")");
+                        }
                         break;
                     case 'T': /* 'ri' aka scroll backward */
-                        if (DCEvars[0] == 0)
+                        if (DCEvars[0] == 0) {
                             insertLine(0, SCROLL_DOWN);
-                        else
+                        } else {
                             insertLine(0, DCEvars[0], SCROLL_DOWN);
+                        }
                         break;
                     case 'M':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + "" + (c) + " at R=" + R);
-                        if (DCEvars[0] == 0)
+                        }
+                        if (DCEvars[0] == 0) {
                             deleteLine(R);
-                        else
+                        } else {
                             for (int i = 0; i < DCEvars[0]; i++)
                                 deleteLine(R);
+                        }
                         break;
                     case 'K':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " K");
+                        }
             /* clear in line */
                         switch (DCEvars[0]) {
                             case 6: /* 97801 uses ESC[6K for delete to end of line */
                             case 0:/*clear to right*/
-                                if (C < columns - 1)
+                                if (C < columns - 1) {
                                     deleteArea(C, R, columns - C, 1, attributes);
+                                }
                                 break;
                             case 1:/*clear to the left, including this */
-                                if (C > 0)
+                                if (C > 0) {
                                     deleteArea(0, R, C + 1, 1, attributes);
+                                }
                                 break;
                             case 2:/*clear whole line */
                                 deleteArea(0, R, columns, 1, attributes);
@@ -2494,67 +2692,84 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             /* clear below current line */
                         switch (DCEvars[0]) {
                             case 0:
-                                if (R < rows - 1)
+                                if (R < rows - 1) {
                                     deleteArea(0, R + 1, columns, rows - R - 1, attributes);
-                                if (C < columns - 1)
+                                }
+                                if (C < columns - 1) {
                                     deleteArea(C, R, columns - C, 1, attributes);
+                                }
                                 break;
                             case 1:
-                                if (R > 0)
+                                if (R > 0) {
                                     deleteArea(0, 0, columns, R, attributes);
-                                if (C > 0)
+                                }
+                                if (C > 0) {
                                     deleteArea(0, R, C + 1, 1, attributes);// include up to and including current
+                                }
                                 break;
                             case 2:
                                 deleteArea(0, 0, columns, rows, attributes);
                                 break;
                         }
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " J");
+                        }
                         break;
                     case '@':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " @");
-                        for (int i = 0; i < DCEvars[0]; i++)
+                        }
+                        for (int i = 0; i < DCEvars[0]; i++) {
                             insertChar(C, R, ' ', attributes);
+                        }
                         break;
                     case 'X': {
                         int toerase = DCEvars[0];
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " X, C=" + C + ",R=" + R);
-                        if (toerase == 0)
+                        }
+                        if (toerase == 0) {
                             toerase = 1;
-                        if (toerase + C > columns)
+                        }
+                        if (toerase + C > columns) {
                             toerase = columns - C;
+                        }
                         deleteArea(C, R, toerase, 1, attributes);
                         // does not change cursor position
                         break;
                     }
                     case 'P':
-                        if (debug > 1)
+                        if (debug > 1) {
                             System.out.println("ESC [ " + DCEvars[0] + " P, C=" + C + ",R=" + R);
-                        if (DCEvars[0] == 0) DCEvars[0] = 1;
-                        for (int i = 0; i < DCEvars[0]; i++)
+                        }
+                        if (DCEvars[0] == 0) {
+                            DCEvars[0] = 1;
+                        }
+                        for (int i = 0; i < DCEvars[0]; i++) {
                             deleteChar(C, R);
+                        }
                         break;
                     case 'n':
                         switch (DCEvars[0]) {
                             case 5: /* malfunction? No malfunction. */
                                 writeSpecial(ESC + "[0n");
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("ESC[5n");
+                                }
                                 break;
                             case 6:
                                 // DO NOT offset R and C by 1! (checked against /usr/X11R6/bin/resize
                                 // FIXME check again.
                                 // FIXME: but vttest thinks different???
                                 writeSpecial(ESC + "[" + R + ";" + C + "R");
-                                if (debug > 1)
+                                if (debug > 1) {
                                     System.out.println("ESC[6n");
+                                }
                                 break;
                             default:
-                                if (debug > 0)
+                                if (debug > 0) {
                                     System.out.println("ESC [ " + DCEvars[0] + " n??");
+                                }
                                 break;
                         }
                         break;
@@ -2562,26 +2777,30 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         Sc = C;
                         Sr = R;
                         Sa = attributes;
-                        if (debug > 3)
+                        if (debug > 3) {
                             System.out.println("ESC[s");
+                        }
                         break;
                     case 'u': /* DECRC - restore cursor */
                         C = Sc;
                         R = Sr;
                         attributes = Sa;
-                        if (debug > 3)
+                        if (debug > 3) {
                             System.out.println("ESC[u");
+                        }
                         break;
                     case 'm':  /* attributes as color, bold , blink,*/
-                        if (debug > 3)
+                        if (debug > 3) {
                             System.out.print("ESC [ ");
-                        if (DCEvar == 0 && DCEvars[0] == 0)
+                        }
+                        if (DCEvar == 0 && DCEvars[0] == 0) {
                             attributes = 0;
+                        }
                         for (int i = 0; i <= DCEvar; i++) {
                             switch (DCEvars[i]) {
                                 case 0:
                                     if (DCEvar > 0) {
-                                        if (terminalID.equals("scoansi")) {
+                                        if ("scoansi".equals(terminalID)) {
                                             attributes &= COLOR; /* Keeps color. Strange but true. */
                                         } else {
                                             attributes = 0;
@@ -2594,13 +2813,14 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                     break;
                                 case 2:
                   /* SCO color hack mode */
-                                    if (terminalID.equals("scoansi") && ((DCEvar - i) >= 2)) {
+                                    if ("scoansi".equals(terminalID) && ((DCEvar - i) >= 2)) {
                                         int ncolor;
                                         attributes &= ~(COLOR | BOLD);
 
                                         ncolor = DCEvars[i + 1];
-                                        if ((ncolor & 8) == 8)
+                                        if ((ncolor & 8) == 8) {
                                             attributes |= BOLD;
+                                        }
                                         ncolor = ((ncolor & 1) << 2) | (ncolor & 2) | ((ncolor & 4) >> 2);
                                         attributes |= ((ncolor) + 1) << COLOR_FG_SHIFT;
                                         ncolor = DCEvars[i + 2];
@@ -2685,11 +2905,13 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                                     System.out.println("ESC [ " + DCEvars[i] + " m unknown...");
                                     break;
                             }
-                            if (debug > 3)
+                            if (debug > 3) {
                                 System.out.print("" + DCEvars[i] + ";");
+                            }
                         }
-                        if (debug > 3)
+                        if (debug > 3) {
                             System.out.print(" (attributes = " + attributes + ")m \n");
+                        }
                         break;
                     default:
                         System.out.println("ESC [ unknown letter:" + c + " (" + ((int) c) + ")");
@@ -2700,12 +2922,21 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 term_state = TSTATE_DATA;
                 break;
         }
-        if (C > columns) C = columns;
-        if (R > rows) R = rows;
-        if (C < 0) C = 0;
-        if (R < 0) R = 0;
-        if (doshowcursor)
+        if (C > columns) {
+            C = columns;
+        }
+        if (R > rows) {
+            R = rows;
+        }
+        if (C < 0) {
+            C = 0;
+        }
+        if (R < 0) {
+            R = 0;
+        }
+        if (doshowcursor) {
             setCursorPosition(C, R);
+        }
         markLine(R, 1);
     }
 
@@ -2719,7 +2950,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         gr = 1;  // default GR to G1
     /* reset tabs */
         int nw = getColumns();
-        if (nw < 132) nw = 132;
+        if (nw < 132) {
+            nw = 132;
+        }
         Tabs = new byte[nw];
         for (int i = 0; i < nw; i += 8) {
             Tabs[i] = 1;

@@ -24,7 +24,6 @@
  */
 package de.mud.ssh;
 
-import java.io.IOException;
 import java.security.SecureRandom;
 
 /**
@@ -46,10 +45,18 @@ public class SshMisc {
         short d2 = byteArray[offset++];
         short d3 = byteArray[offset++];
 
-        if (d0 < 0) d0 = (short) (256 + d0);
-        if (d1 < 0) d1 = (short) (256 + d1);
-        if (d2 < 0) d2 = (short) (256 + d2);
-        if (d3 < 0) d3 = (short) (256 + d3);
+        if (d0 < 0) {
+            d0 = (short) (256 + d0);
+        }
+        if (d1 < 0) {
+            d1 = (short) (256 + d1);
+        }
+        if (d2 < 0) {
+            d2 = (short) (256 + d2);
+        }
+        if (d3 < 0) {
+            d3 = (short) (256 + d3);
+        }
 
         int length = d0 * 16777216  //to be checked
                 + d1 * 65536
@@ -57,10 +64,11 @@ public class SshMisc {
                 + d3;
         String str = ""; //new String(byteArray,0);
         for (int i = 0; i < length; i++) {
-            if (byteArray[offset] >= 0)
+            if (byteArray[offset] >= 0) {
                 str += (char) (byteArray[offset++]);
-            else
+            } else {
                 str += (char) (256 + byteArray[offset++]);
+            }
         }
         return str;
     }
@@ -71,29 +79,41 @@ public class SshMisc {
         SecureRandom random = new java.security.SecureRandom(randomBytes);
         while (true) {
             random.nextBytes(randomBytes);
-            for (byte randomByte : randomBytes)
+            for (byte randomByte : randomBytes) {
                 if (randomByte != 0)
                     return randomByte;
+            }
         }
     }
 
     static public byte[] addArrayOfBytes(byte[] a, byte[] b) {
-        if (a == null) return b;
-        if (b == null) return a;
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
         byte[] temp = new byte[a.length + b.length];
         System.arraycopy(a, 0, temp, 0, a.length);
-        System.arraycopy(b, 0, temp, 0 + a.length, b.length);
+        System.arraycopy(b, 0, temp, a.length, b.length);
         return temp;
     }
 
 
     static public byte[] XORArrayOfBytes(byte[] a, byte[] b) {
-        if (a == null) return null;
-        if (b == null) return null;
-        if (a.length != b.length) return null;
+        if (a == null) {
+            return null;
+        }
+        if (b == null) {
+            return null;
+        }
+        if (a.length != b.length) {
+            return null;
+        }
         byte[] result = new byte[a.length];
-        for (int i = 0; i < result.length; i++)
+        for (int i = 0; i < result.length; i++) {
             result[i] = (byte) (((a[i] & 0xff) ^ (b[i] & 0xff)) & 0xff);// ^ xor operator
+        }
         return result;
     }
 
@@ -114,13 +134,19 @@ public class SshMisc {
         short d0 = byteArray[offset++];
         short d1 = byteArray[offset++];
 
-        if (d0 < 0) d0 = (short) (256 + d0);
-        if (d1 < 0) d1 = (short) (256 + d1);
+        if (d0 < 0) {
+            d0 = (short) (256 + d0);
+        }
+        if (d1 < 0) {
+            d1 = (short) (256 + d1);
+        }
 
 
         int byteLength = (d0 * 256 + d1 + 7) / 8;
         MpInt = new byte[byteLength];
-        for (int i = 0; i < byteLength; i++) MpInt[i] = byteArray[offset++];
+        for (int i = 0; i < byteLength; i++) {
+            MpInt[i] = byteArray[offset++];
+        }
         return MpInt;
     } //getMpInt
 

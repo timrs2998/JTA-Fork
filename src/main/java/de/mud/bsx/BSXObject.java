@@ -107,7 +107,7 @@ public class BSXObject {
                 px = px + x * 16;
                 py = py - 127;
                 py = py + 4 * y;
-                poly[2 * polys + 0][points] = px * 2;
+                poly[(2 * polys)][points] = px * 2;
                 poly[2 * polys + 1][points] = 255 - py;
             }
             g.fillPolygon(poly[2 * polys],
@@ -125,7 +125,7 @@ public class BSXObject {
         this.data = data;
         poly = new int[data.length * 2][];
         for (int num = 0; num < data.length; num++) {
-            poly[2 * num + 0] = new int[(data[num].length - 1) / 2];
+            poly[(2 * num)] = new int[(data[num].length - 1) / 2];
             poly[2 * num + 1] = new int[(data[num].length - 1) / 2];
         }
     }

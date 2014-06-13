@@ -44,7 +44,9 @@ public class WindowSizeRequest implements PluginMessage {
     public Object firePluginMessage(PluginListener pl) {
         if (pl instanceof WindowSizeListener) {
             Object ret = ((WindowSizeListener) pl).getWindowSize();
-            if (ret != null) return ret;
+            if (ret != null) {
+                return ret;
+            }
         }
         return null;
     }

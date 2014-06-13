@@ -54,7 +54,9 @@ public class Sink extends Plugin
         // register an online status listener
         bus.registerPluginListener(new OnlineStatusListener() {
             public void online() {
-                if (debug > 0) System.err.println("Terminal: online " + reader);
+                if (debug > 0) {
+                    System.err.println("Terminal: online " + reader);
+                }
                 if (reader == null) {
                     reader = new Thread();
                     reader.start();
@@ -62,9 +64,12 @@ public class Sink extends Plugin
             }
 
             public void offline() {
-                if (debug > 0) System.err.println("Terminal: offline");
-                if (reader != null)
+                if (debug > 0) {
+                    System.err.println("Terminal: offline");
+                }
+                if (reader != null) {
                     reader = null;
+                }
             }
         });
     }
@@ -75,19 +80,23 @@ public class Sink extends Plugin
     public void run() {
         byte[] t, b = new byte[256];
         int n = 0;
-        while (n >= 0) try {
-            n = read(b);
+        while (n >= 0) {
+            try {
+                n = read(b);
       /* drop the bytes into the sink :) */
-        } catch (IOException e) {
-            reader = null;
-            break;
+            } catch (IOException e) {
+                reader = null;
+                break;
+            }
         }
     }
 
     protected FilterPlugin source;
 
     public void setFilterSource(FilterPlugin source) {
-        if (debug > 0) System.err.println("Terminal: connected to: " + source);
+        if (debug > 0) {
+            System.err.println("Terminal: connected to: " + source);
+        }
         this.source = source;
     }
 

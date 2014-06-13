@@ -52,11 +52,12 @@ public class OnlineStatus implements PluginMessage {
      * @return the window size or null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof OnlineStatusListener)
+        if (pl instanceof OnlineStatusListener) {
             if (online)
                 ((OnlineStatusListener) pl).online();
             else
                 ((OnlineStatusListener) pl).offline();
+        }
         return null;
     }
 }

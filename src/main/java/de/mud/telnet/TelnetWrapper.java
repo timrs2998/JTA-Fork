@@ -110,11 +110,12 @@ public class TelnetWrapper extends Wrapper {
      * @return output of the command or null if no prompt is set
      */
     public String send(String cmd) throws IOException {
-        byte arr[];
+        byte[] arr;
         arr = (cmd + "\n").getBytes();
         handler.transpose(arr);
-        if (getPrompt() != null)
+        if (getPrompt() != null) {
             return waitfor(getPrompt());
+        }
         return null;
     }
 
@@ -131,19 +132,22 @@ public class TelnetWrapper extends Wrapper {
 
         do {
             n = handler.negotiate(b);
-            if (n > 0)
+            if (n > 0) {
                 return n;
+            }
         } while (n == 0);
 
         while (n <= 0) {
             do {
                 n = handler.negotiate(b);
-                if (n > 0)
+                if (n > 0) {
                     return n;
+                }
             } while (n == 0);
             n = in.read(b);
-            if (n < 0)
+            if (n < 0) {
                 return n;
+            }
             handler.inputfeed(b, n);
             n = handler.negotiate(b);
         }

@@ -53,8 +53,9 @@ public class LocalEchoRequest implements PluginMessage {
      * @return always null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof LocalEchoListener)
+        if (pl instanceof LocalEchoListener) {
             ((LocalEchoListener) pl).setLocalEcho(xecho);
+        }
         return null;
     }
 }

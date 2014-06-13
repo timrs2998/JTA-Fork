@@ -51,7 +51,9 @@ public class ScriptHandler {
      * @param match the string to look for
      */
     public void setup(String match) {
-        if (match == null) return;
+        if (match == null) {
+            return;
+        }
         this.match = match.getBytes();
         matchPos = 0;
         done = false;
@@ -65,7 +67,9 @@ public class ScriptHandler {
      * @return true if the string was found, else false
      */
     public boolean match(byte[] s, int length) {
-        if (done) return true;
+        if (done) {
+            return true;
+        }
         for (int i = 0; !done && i < length; i++) {
             if (s[i] == match[matchPos]) {
                 // the whole thing matched so, return the match answer
@@ -74,8 +78,9 @@ public class ScriptHandler {
                     done = true;
                     return true;
                 }
-            } else
+            } else {
                 matchPos = 0; // get back to the beginning
+            }
         }
         return false;
     }

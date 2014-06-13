@@ -51,8 +51,9 @@ public class ReturnFocusRequest implements PluginMessage {
      * @return always null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof ReturnFocusListener)
+        if (pl instanceof ReturnFocusListener) {
             ((ReturnFocusListener) pl).returnFocus();
+        }
         return null;
     }
 }

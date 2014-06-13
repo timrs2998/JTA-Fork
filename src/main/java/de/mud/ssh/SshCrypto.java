@@ -94,10 +94,13 @@ public class SshCrypto {
         EncryptionBlock[0] = 0;
         EncryptionBlock[1] = 2;
         offset = 2;
-        for (int i = 2; i < (EncryptionBlock.length - clearData.length - 1); i++)
+        for (int i = 2; i < (EncryptionBlock.length - clearData.length - 1); i++) {
             EncryptionBlock[offset++] = SshMisc.getNotZeroRandomByte();
+        }
         EncryptionBlock[offset++] = 0;
-        for (byte aClearData1 : clearData) EncryptionBlock[offset++] = aClearData1;
+        for (byte aClearData1 : clearData) {
+            EncryptionBlock[offset++] = aClearData1;
+        }
 
         //EncryptionBlock can be encrypted now !
         BigInteger m, e, message;
@@ -114,11 +117,13 @@ public class SshCrypto {
         //there should be no zeroes a the begining but we have to fix it (JDK bug !!)
         messageByte = new byte[key1mod.length];
         int tempOffset = 0;
-        while (messageByteTemp[tempOffset] == 0)
+        while (messageByteTemp[tempOffset] == 0) {
             tempOffset++;
+        }
         for (int i = messageByte.length - messageByteTemp.length + tempOffset;
-             i < messageByte.length; i++)
+             i < messageByte.length; i++) {
             messageByte[i] = messageByteTemp[tempOffset++];
+        }
 
         clearData = messageByte;
 
@@ -131,10 +136,13 @@ public class SshCrypto {
         EncryptionBlock[1] = 2;
 
         offset = 2;
-        for (int i = 2; i < (EncryptionBlock.length - clearData.length - 1); i++)
+        for (int i = 2; i < (EncryptionBlock.length - clearData.length - 1); i++) {
             EncryptionBlock[offset++] = SshMisc.getNotZeroRandomByte();    //random !=0
+        }
         EncryptionBlock[offset++] = 0;
-        for (byte aClearData : clearData) EncryptionBlock[offset++] = aClearData;
+        for (byte aClearData : clearData) {
+            EncryptionBlock[offset++] = aClearData;
+        }
 
         //EncryptionBlock can be encrypted now !
 
@@ -148,11 +156,13 @@ public class SshCrypto {
         //there should be no zeroes a the begining but we have to fix it (JDK bug !!)
         messageByte = new byte[key2mod.length];
         tempOffset = 0;
-        while (messageByteTemp[tempOffset] == 0)
+        while (messageByteTemp[tempOffset] == 0) {
             tempOffset++;
+        }
         for (int i = messageByte.length - messageByteTemp.length + tempOffset;
-             i < messageByte.length; i++)
+             i < messageByte.length; i++) {
             messageByte[i] = messageByteTemp[tempOffset++];
+        }
 
         //Second encrypted key : encrypted_session_key //mp-int
 

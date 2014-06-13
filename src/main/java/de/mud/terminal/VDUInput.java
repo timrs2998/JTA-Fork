@@ -45,7 +45,7 @@ public interface VDUInput {
      *
      * @param b
      */
-    void write(byte b[]);
+    void write(byte[] b);
 
     /**
      * Terminal is mouse-aware and requires (x,y) coordinates of

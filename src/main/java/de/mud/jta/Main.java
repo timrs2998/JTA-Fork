@@ -36,7 +36,6 @@ import java.awt.event.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -78,7 +77,7 @@ public class Main {
 
     private static String host, port;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         final Properties options = new Properties();
         try {
             options.load(Main.class.getResourceAsStream("/default.conf"));
@@ -96,7 +95,7 @@ public class Main {
         }
 
         String cfg = options.getProperty("Main.config");
-        if (cfg != null)
+        if (cfg != null) {
             try {
                 options.load(new URL(cfg).openStream());
             } catch (IOException e) {
@@ -106,11 +105,12 @@ public class Main {
                     System.err.println("jta: cannot load " + cfg);
                 }
             }
+        }
 
         host = options.getProperty("Socket.host");
         port = options.getProperty("Socket.port");
 
-        final JFrame frame = new JFrame("jta: " + host + (port.equals("23") ? "" : " " + port));
+        final JFrame frame = new JFrame("jta: " + host + ("23".equals(port) ? "" : " " + port));
 
         // set up the clipboard
         try {
@@ -124,7 +124,7 @@ public class Main {
         // configure the application and load all plugins
         final Common setup = new Common(options);
 
-        if (port == null || port.length() == 0) {
+        if (port == null || port.isEmpty()) {
             if (setup.getPlugins().containsKey("SSH")) {
                 port = "22";
             } else {
@@ -134,7 +134,7 @@ public class Main {
 
         setup.registerPluginListener(new OnlineStatusListener() {
             public void online() {
-                frame.setTitle("jta: " + host + (port.equals("23") ? "" : " " + port));
+                frame.setTitle("jta: " + host + ("23".equals(port) ? "" : " " + port));
             }
 
             public void offline() {
@@ -145,15 +145,17 @@ public class Main {
         // register a focus status listener, so we know when a plugin got focus
         setup.registerPluginListener(new FocusStatusListener() {
             public void pluginGainedFocus(Plugin plugin) {
-                if (Main.debug > 0)
+                if (Main.debug > 0) {
                     System.err.println("Main: " + plugin + " got focus");
+                }
                 focussedPlugin = plugin;
             }
 
             public void pluginLostFocus(Plugin plugin) {
                 // we ignore the lost focus
-                if (Main.debug > 0)
+                if (Main.debug > 0) {
                     System.err.println("Main: " + plugin + " lost focus");
+                }
             }
         });
 
@@ -164,8 +166,9 @@ public class Main {
             if (options.getProperty("layout." + name) == null) {
                 System.err.println("jta: no layout property set for '" + name + "'");
                 frame.add("South", c);
-            } else
+            } else {
                 frame.getContentPane().add(options.getProperty("layout." + name), c);
+            }
         }
 
         if (!personalJava) {
@@ -214,7 +217,9 @@ public class Main {
                     PrintJob printJob =
                             frame.getToolkit().getPrintJob(frame, "JTA Terminal", null);
                     // return if the user clicked cancel
-                    if (printJob == null) return;
+                    if (printJob == null) {
+                        return;
+                    }
                     ((JComponent) setup.getComponents().get("Terminal"))
                             .print(printJob.getGraphics());
                     printJob.end();
@@ -232,14 +237,16 @@ public class Main {
             edit.add(tmp = new JMenuItem("Copy"));
             tmp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
             tmp.addActionListener(evt -> {
-                if (focussedPlugin instanceof VisualTransferPlugin)
+                if (focussedPlugin instanceof VisualTransferPlugin) {
                     ((VisualTransferPlugin) focussedPlugin).copy(clipboard);
+                }
             });
             edit.add(tmp = new JMenuItem("Paste"));
             tmp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
             tmp.addActionListener(evt -> {
-                if (focussedPlugin instanceof VisualTransferPlugin)
+                if (focussedPlugin instanceof VisualTransferPlugin) {
                     ((VisualTransferPlugin) focussedPlugin).paste(clipboard);
+                }
             });
             mb.add(edit);
 
@@ -261,16 +268,18 @@ public class Main {
 
         frame.pack();
 
-        if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen"))))
+        if ((Boolean.parseBoolean(options.getProperty("Applet.detach.fullscreen")))) {
             frame.setSize(frame.getToolkit().getScreenSize());
-        else
+        } else {
             frame.pack();
+        }
 
         frame.setVisible(true);
 
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("host: '" + host + "', " + host.length());
-        if (host != null && host.length() > 0) {
+        }
+        if (host != null && !host.isEmpty()) {
             setup.broadcast(new SocketRequest(host, Integer.parseInt(port)));
         }
     /* make sure the focus goes somewhere to start off with */
@@ -290,37 +299,38 @@ public class Main {
      * @param args    the command line parameters
      * @return a possible error message if problems occur
      */
-    private static String parseOptions(Properties options, String args[]) {
+    private static String parseOptions(Properties options, String[] args) {
         boolean host = false, port = false;
         for (int n = 0; n < args.length; n++) {
-            if (args[n].equals("-config"))
+            if ("-config".equals(args[n])) {
                 if (!args[n + 1].startsWith("-"))
                     options.put("Main.config", args[++n]);
                 else
                     return "missing parameter for -config";
-            else if (args[n].equals("-plugins"))
+            } else if ("-plugins".equals(args[n])) {
                 if (!args[n + 1].startsWith("-"))
                     options.put("plugins", args[++n]);
                 else
                     return "missing parameter for -plugins";
-            else if (args[n].equals("-addplugin"))
+            } else if ("-addplugin".equals(args[n])) {
                 if (!args[n + 1].startsWith("-"))
                     options.put("plugins", args[++n] + "," + options.get("plugins"));
                 else
                     return "missing parameter for -addplugin";
-            else if (args[n].equals("-term"))
+            } else if ("-term".equals(args[n])) {
                 if (!args[n + 1].startsWith("-"))
                     options.put("Terminal.id", args[++n]);
                 else
                     return "missing parameter for -term";
-            else if (!host) {
+            } else if (!host) {
                 options.put("Socket.host", args[n]);
                 host = true;
             } else if (host && !port) {
                 options.put("Socket.port", args[n]);
                 port = true;
-            } else
+            } else {
                 return "unknown parameter '" + args[n] + "'";
+            }
         }
         return null;
     }

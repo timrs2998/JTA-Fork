@@ -58,8 +58,9 @@ public class BSXCache {
 
     public String toString() {
         StringBuilder res = new StringBuilder("" + size + " entries\n");
-        for (int i = cacheSize - size; i < cacheSize; i++)
+        for (int i = cacheSize - size; i < cacheSize; i++) {
             res.append("\t\t").append(i).append(":\t").append(ids[i]).append("\n");
+        }
         return res.toString();
     }
 
@@ -98,8 +99,9 @@ public class BSXCache {
         if (NOT_FOUND != index) {
             remove(index);
         } else {
-            if (size == cacheSize)
+            if (size == cacheSize) {
                 move(cacheSize / 10);
+            }
         }
         size++;
         ids[cacheSize - size] = id;
@@ -128,8 +130,9 @@ public class BSXCache {
     }
 
     private void move(int offset) {
-        if (offset > size)
+        if (offset > size) {
             return;
+        }
         // from - to
         for (int i = 1; i <= offset; i++) {
             bsx[cacheSize - i].flush();
@@ -145,11 +148,12 @@ public class BSXCache {
 
     private int find(String id) {
         int res = NOT_FOUND;
-        for (int index = cacheSize - size; index < cacheSize; index++)
+        for (int index = cacheSize - size; index < cacheSize; index++) {
             if (id.equals(ids[index])) {
                 res = index;
                 break;
             }
+        }
         return res;
     }
 }

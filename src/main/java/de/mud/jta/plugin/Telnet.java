@@ -115,10 +115,14 @@ public class Telnet extends Plugin implements FilterPlugin {
 
     public void configure(PluginConfig cfg) {
         String crlf = cfg.getProperty("Telnet", id, "crlf");    // on \n
-        if (crlf != null) handler.setCRLF(crlf);
+        if (crlf != null) {
+            handler.setCRLF(crlf);
+        }
 
         String cr = cfg.getProperty("Telnet", id, "cr");    // on \r
-        if (cr != null) handler.setCR(cr);
+        if (cr != null) {
+            handler.setCR(cr);
+        }
     }
 
     public void setFilterSource(FilterPlugin source) {
@@ -143,8 +147,9 @@ public class Telnet extends Plugin implements FilterPlugin {
      */
         do {
             n = handler.negotiate(b);
-            if (n > 0)
+            if (n > 0) {
                 return n;
+            }
         } while (n == 0);
 
     /* try reading stuff until we get at least 1 byte of real data or are 
@@ -152,17 +157,21 @@ public class Telnet extends Plugin implements FilterPlugin {
      */
         while (true) {
             n = source.read(b);
-            if (n <= 0)
+            if (n <= 0) {
                 return n;
+            }
 
             handler.inputfeed(b, n);
             n = 0;
             while (true) {
                 n = handler.negotiate(b);
-                if (n > 0)
+                if (n > 0) {
                     return n;
+                }
                 if (n == -1) // buffer empty.
+                {
                     break;
+                }
             }
             return 0;
         }

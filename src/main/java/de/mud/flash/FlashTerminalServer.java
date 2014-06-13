@@ -50,14 +50,15 @@ public class FlashTerminalServer implements Runnable {
      * Read all parameters from the applet configuration and
      * do initializations for the plugins and the applet.
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         System.out.println("FlashTerminalServer (c) 2002 Matthias L. Jugel, Marcus Mei�ner");
         if (args.length < 2) {
             System.err.println("usage: FlashTerminalServer host port");
             System.exit(0);
         }
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("FlashTerminalServer: main(" + args[0] + ", " + args[1] + ")");
+        }
         try {
             ServerSocket serverSocket = new ServerSocket(8080);
             // create a new
@@ -83,13 +84,13 @@ public class FlashTerminalServer implements Runnable {
     /**
      * the terminal
      */
-    private vt320 emulation;
+    private final vt320 emulation;
     private FlashTerminal terminal;
 
     /**
      * the telnet protocol handler
      */
-    private TelnetProtocolHandler telnet;
+    private final TelnetProtocolHandler telnet;
 
     private boolean localecho = true;
 
@@ -133,15 +134,17 @@ public class FlashTerminalServer implements Runnable {
             /** notify about EOR end of record */
             public void notifyEndOfRecord() {
                 // only used when EOR needed, like for line mode
-                if (debug > 0)
+                if (debug > 0) {
                     System.err.println("FlashTerminalServer: EOR");
+                }
                 terminal.redraw();
             }
 
             /** write data to our back end */
             public void write(byte[] b) throws IOException {
-                if (debug > 0)
+                if (debug > 0) {
                     System.err.println("FlashTerminalServer: writing " + Integer.toHexString(b[0]) + " " + new String(b));
+                }
                 os.write(b);
             }
         };
@@ -174,7 +177,9 @@ public class FlashTerminalServer implements Runnable {
     }
 
     public void run() {
-        if (debug > 0) System.err.println("FlashTerminalServer: run()");
+        if (debug > 0) {
+            System.err.println("FlashTerminalServer: run()");
+        }
         running = true;
 
         byte[] b = new byte[4096];
@@ -182,24 +187,30 @@ public class FlashTerminalServer implements Runnable {
         while (running && n >= 0) {
             try {
                 n = telnet.negotiate(b);    // we still have stuff buffered ...
-                if (n > 0)
+                if (n > 0) {
                     emulation.putString(new String(b, 0, n));
+                }
 
                 while (true) {
                     n = is.read(b);
-                    if (debug > 0)
+                    if (debug > 0) {
                         System.err.println("FlashTerminalServer: got " + n + " bytes");
-                    if (n <= 0)
+                    }
+                    if (n <= 0) {
                         continue;
+                    }
 
                     telnet.inputfeed(b, n);
                     n = 0;
                     while (true) {
                         n = telnet.negotiate(b);
-                        if (n > 0)
+                        if (n > 0) {
                             emulation.putString(new String(b, 0, n));
+                        }
                         if (n == -1) // buffer empty.
+                        {
                             break;
+                        }
                     }
                 }
             } catch (IOException e) {

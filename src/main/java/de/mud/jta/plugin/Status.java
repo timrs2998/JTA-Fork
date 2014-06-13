@@ -27,7 +27,6 @@ package de.mud.jta.plugin;
 
 import de.mud.jta.Plugin;
 import de.mud.jta.PluginBus;
-import de.mud.jta.PluginConfig;
 import de.mud.jta.VisualPlugin;
 import de.mud.jta.event.ConfigurationListener;
 import de.mud.jta.event.OnlineStatusListener;
@@ -73,31 +72,36 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
         // setup the info
         bus.registerPluginListener((ConfigurationListener) config -> {
             infoURL = config.getProperty("Status", id, "info");
-            if (infoURL != null)
+            if (infoURL != null) {
                 host.setAlignmentX(JLabel.CENTER);
+            }
             String tmp;
             if ((tmp = config.getProperty("Status", id, "font")) != null) {
                 String font = tmp;
                 int style = Font.PLAIN, fsize = 12;
-                if ((tmp = config.getProperty("Status", id, "fontSize")) != null)
+                if ((tmp = config.getProperty("Status", id, "fontSize")) != null) {
                     fsize = Integer.parseInt(tmp);
+                }
                 String fontStyle = config.getProperty("Status", id, "fontStyle");
-                if (fontStyle == null || fontStyle.equals("plain"))
+                if (fontStyle == null || "plain".equals(fontStyle)) {
                     style = Font.PLAIN;
-                else if (fontStyle.equals("bold"))
+                } else if ("bold".equals(fontStyle)) {
                     style = Font.BOLD;
-                else if (fontStyle.equals("italic"))
+                } else if ("italic".equals(fontStyle)) {
                     style = Font.ITALIC;
-                else if (fontStyle.equals("bold+italic"))
+                } else if ("bold+italic".equals(fontStyle)) {
                     style = Font.BOLD | Font.ITALIC;
+                }
                 host.setFont(new Font(font, style, fsize));
             }
 
-            if ((tmp = config.getProperty("Status", id, "foreground")) != null)
+            if ((tmp = config.getProperty("Status", id, "foreground")) != null) {
                 host.setForeground(Color.decode(tmp));
+            }
 
-            if ((tmp = config.getProperty("Status", id, "background")) != null)
+            if ((tmp = config.getProperty("Status", id, "background")) != null) {
                 host.setBackground(Color.decode(tmp));
+            }
 
             if (config.getProperty("Status", id, "interval") != null) {
                 try {
@@ -124,19 +128,23 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
         bus.registerPluginListener(new SocketListener() {
             public void connect(String addr, int p) {
                 address = addr;
-                if (address == null || address.length() == 0)
+                if (address == null || address.isEmpty()) {
                     address = "<unknown host>";
-                if (ports.get("" + p) != null)
+                }
+                if (ports.get("" + p) != null) {
                     port = (String) ports.get("" + p);
-                else
+                } else {
                     port = "" + p;
-                if (infoURL == null)
+                }
+                if (infoURL == null) {
                     host.setText("Trying " + address + " " + port + " ...");
+                }
             }
 
             public void disconnect() {
-                if (infoURL == null)
+                if (infoURL == null) {
                     host.setText("Not connected.");
+                }
             }
         });
 
@@ -148,8 +156,9 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
             public void online() {
                 status.setText("online");
                 status.setForeground(Color.green);
-                if (infoURL == null)
+                if (infoURL == null) {
                     host.setText("Connected to " + address + " " + port);
+                }
                 status.repaint();
             }
 
@@ -157,8 +166,9 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
 
                 status.setText("offline");
                 status.setForeground(Color.red);
-                if (infoURL == null)
+                if (infoURL == null) {
                     host.setText("Not connected.");
+                }
                 status.repaint();
             }
         });
@@ -190,12 +200,12 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
                             host.setForeground(Color.decode("#" + color));
                         }
                         host.setText(line);
-                        infoThread.sleep(10 * interval);
+                        Thread.sleep(10 * interval);
                     }
                 } catch (IOException e) {
                     error("error while loading info ...");
                 }
-                infoThread.sleep(100 * interval);
+                Thread.sleep(100 * interval);
             } catch (Exception e) {
                 error("error retrieving info content: " + e);
                 e.printStackTrace();

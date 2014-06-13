@@ -95,7 +95,9 @@ public final class BSXDisplay extends Component {
             }
             bsxscene = working;
         } // working!=null
-        if (bsxscene != null) bsxscene.clean();
+        if (bsxscene != null) {
+            bsxscene.clean();
+        }
         return res;
     }
 
@@ -174,7 +176,9 @@ public final class BSXDisplay extends Component {
 
     // Die eigentliche Malroutine
     private void redraw() {
-        if (bsxscene == null) return;
+        if (bsxscene == null) {
+            return;
+        }
         Graphics g;
         g = picture.getGraphics();
         bsxscene.fill(g);
@@ -226,7 +230,7 @@ public final class BSXDisplay extends Component {
         return dim;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Frame f;
         BSXDisplay b;
 
@@ -235,7 +239,7 @@ public final class BSXDisplay extends Component {
         f.add(b);
         f.pack();
         f.setResizable(false);
-        f.show();
+        f.setVisible(true);
 
         int[][] scene = new int[3][];
         scene[0] = new int[]{0, 0, 0, 255, 0, 255, 255, 0, 255};

@@ -188,8 +188,9 @@ public class BSX extends Plugin
                     break;
                 case 1: // read command
                     if ((char) b[index] == '@') {
-                        for (int i = 0; i < cmdlen; i++)
+                        for (int i = 0; i < cmdlen; i++) {
                             res[resindex++] = cmd[i];
+                        }
                         cmdlen = 0;
                         cmd[cmdlen++] = b[index];
                     } else {
@@ -214,11 +215,14 @@ public class BSX extends Plugin
                             } else if (equals(cmd, TMS)) {
 
                                 byte[] temp = "\n\n\tTerminate Session!\n\n".getBytes();
-                                for (byte aTemp : temp) res[resindex++] = aTemp;
+                                for (byte aTemp : temp) {
+                                    res[resindex++] = aTemp;
+                                }
                                 reset();
                             } else {
-                                for (int i = 0; i < cmdlen; i++)
+                                for (int i = 0; i < cmdlen; i++) {
                                     res[resindex++] = cmd[i];
+                                }
                                 reset();
                             }
                         }
@@ -226,10 +230,12 @@ public class BSX extends Plugin
                     break;
                 case 2: // read identifier
                     if ((char) b[index] == '@') {
-                        for (int i = 0; i < cmdlen; i++)
+                        for (int i = 0; i < cmdlen; i++) {
                             res[resindex++] = cmd[i];
-                        for (int i = 0; i < idlen; i++)
+                        }
+                        for (int i = 0; i < idlen; i++) {
                             res[resindex++] = id[i];
+                        }
                         cmdlen = 0;
                         cmd[cmdlen++] = b[index];
                         idlen = 0;
@@ -240,8 +246,9 @@ public class BSX extends Plugin
                         obj = new String(id, 0, idlen);
                         if (equals(cmd, SCE)) {
                             String query = visual.showScene(obj);
-                            if (query != null)
+                            if (query != null) {
                                 write(query);
+                            }
                             reset();
                         } else if (equals(cmd, VIO)) {
                             state = 6;
@@ -363,8 +370,9 @@ public class BSX extends Plugin
                             reset();
                         } else {
                             String query = visual.showObject(obj, xpos, ypos);
-                            if (query != null)
+                            if (query != null) {
                                 write(query);
+                            }
                             reset();
                         }
                     }
@@ -403,8 +411,9 @@ public class BSX extends Plugin
      * @return true if they contain the same values
      */
     protected boolean equals(byte[] a, byte[] b) {
-        for (int i = 0; i < a.length && i < b.length; i++)
+        for (int i = 0; i < a.length && i < b.length; i++) {
             if (a[i] != b[i]) return false;
+        }
         return a.length == b.length;
     }
 
@@ -420,18 +429,20 @@ public class BSX extends Plugin
 
         h = (char) b[0];
         i = (char) b[1];
-        if (h >= 'A' && h <= 'F')
+        if (h >= 'A' && h <= 'F') {
             f = h - 'A' + 10;
-        else if (h >= '0' && h <= '9')
+        } else if (h >= '0' && h <= '9') {
             f = h - '0';
-        else
+        } else {
             return -1;
-        if (i >= 'A' && i <= 'F')
+        }
+        if (i >= 'A' && i <= 'F') {
             g = i - 'A' + 10;
-        else if (i >= '0' && i <= '9')
+        } else if (i >= '0' && i <= '9') {
             g = i - '0';
-        else
+        } else {
             return -1;
+        }
         return f * 16 + g;
     }
 }

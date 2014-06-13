@@ -28,7 +28,6 @@ package de.mud.jta.plugin;
 import de.mud.jta.FilterPlugin;
 import de.mud.jta.Plugin;
 import de.mud.jta.PluginBus;
-import de.mud.jta.PluginConfig;
 import de.mud.jta.event.ConfigurationListener;
 import de.mud.jta.event.OnlineStatus;
 import de.mud.jta.event.SocketListener;
@@ -68,7 +67,7 @@ public class Socket extends Plugin
 
         bus.registerPluginListener((ConfigurationListener) config -> {
             if ((relay = config.getProperty("Socket", id, "relay"))
-                    != null)
+                    != null) {
                 if (config.getProperty("Socket", id, "relayPort") != null)
                     try {
                         relayPort = Integer.parseInt(
@@ -76,6 +75,7 @@ public class Socket extends Plugin
                     } catch (NumberFormatException e) {
                         Socket.this.error("relayPort is not a number");
                     }
+            }
         });
     }
 
@@ -89,19 +89,25 @@ public class Socket extends Plugin
      * be published to be online.
      */
     public void connect(String host, int port) throws IOException {
-        if (host == null) return;
-        if (debug > 0) error("connect(" + host + "," + port + ")");
+        if (host == null) {
+            return;
+        }
+        if (debug > 0) {
+            error("connect(" + host + "," + port + ")");
+        }
         try {
             // check the relay settings, this is for the mrelayd only!
-            if (relay == null)
+            if (relay == null) {
                 socket = new java.net.Socket(host, port);
-            else
+            } else {
                 socket = new java.net.Socket(relay, relayPort);
+            }
             in = socket.getInputStream();
             out = socket.getOutputStream();
             // send the string to relay to the target host, port
-            if (relay != null)
+            if (relay != null) {
                 write(("relay " + host + " " + port + "\n").getBytes());
+            }
         } catch (Exception e) {
             error = "Sorry, Could not connect to: " + host + " " + port + "\r\n" +
                     "Reason: " + e + "\r\n\r\n";
@@ -114,7 +120,9 @@ public class Socket extends Plugin
      * Disconnect the socket and close the connection.
      */
     public void disconnect() throws IOException {
-        if (debug > 0) error("disconnect()");
+        if (debug > 0) {
+            error("disconnect()");
+        }
         bus.broadcast(new OnlineStatus(false));
         if (socket != null) {
             socket.close();
@@ -133,7 +141,7 @@ public class Socket extends Plugin
 
     public int read(byte[] b) throws IOException {
         // send error messages upward
-        if (error != null && error.length() > 0) {
+        if (error != null && !error.isEmpty()) {
             int n = error.length() < b.length ? error.length() : b.length;
             System.arraycopy(error.getBytes(), 0, b, 0, n);
             error = error.substring(n);
@@ -146,12 +154,16 @@ public class Socket extends Plugin
         }
 
         int n = in.read(b);
-        if (n < 0) disconnect();
+        if (n < 0) {
+            disconnect();
+        }
         return n;
     }
 
     public void write(byte[] b) throws IOException {
-        if (out == null) return;
+        if (out == null) {
+            return;
+        }
         try {
             out.write(b);
         } catch (IOException e) {

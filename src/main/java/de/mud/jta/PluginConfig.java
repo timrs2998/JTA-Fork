@@ -55,11 +55,15 @@ public class PluginConfig extends Properties {
      * @return the property value or null
      */
     public String getProperty(String plugin, String id, String key) {
-        if (id == null) id = "";
-        else id = "(" + id + ")";
+        if (id == null) {
+            id = "";
+        } else {
+            id = "(" + id + ")";
+        }
         String result = getProperty(plugin + id, key);
-        if (result == null)
+        if (result == null) {
             result = getProperty(plugin, key);
+        }
         return result;
     }
 
@@ -83,8 +87,11 @@ public class PluginConfig extends Properties {
      */
 
     public void setProperty(String plugin, String id, String key, String value) {
-        if (id == null) id = "";
-        else id = "(" + id + ")";
+        if (id == null) {
+            id = "";
+        } else {
+            id = "(" + id + ")";
+        }
         setProperty(plugin + id, key, value);
     }
 

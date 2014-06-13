@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 /**
  * Secure Shell IO
@@ -138,13 +139,13 @@ public abstract class SshIO {
     //
     // encryption types
     //
-    private int SSH_CIPHER_NONE = 0;     // No encryption
+    private final int SSH_CIPHER_NONE = 0;     // No encryption
     private final int SSH_CIPHER_IDEA = 1;  // IDEA in CFB mode		(patented)
     private final int SSH_CIPHER_DES = 2;  // DES in CBC mode
     private final int SSH_CIPHER_3DES = 3;  // Triple-DES in CBC mode
-    private int SSH_CIPHER_TSS = 4;  // An experimental stream cipher
+    private final int SSH_CIPHER_TSS = 4;  // An experimental stream cipher
 
-    private int SSH_CIPHER_RC4 = 5;  // RC4			(patented)
+    private final int SSH_CIPHER_RC4 = 5;  // RC4			(patented)
 
     private final int SSH_CIPHER_BLOWFISH = 6;    // Bruce Scheiers blowfish (public d)
 
@@ -168,12 +169,16 @@ public abstract class SshIO {
     }
 
     public void setLogin(String user) {
-        if (user == null) user = "";
+        if (user == null) {
+            user = "";
+        }
         login = user;
     }
 
     public void setPassword(String password) {
-        if (password == null) password = "";
+        if (password == null) {
+            password = "";
+        }
         this.password = password;
     }
 
@@ -204,16 +209,21 @@ public abstract class SshIO {
         if (phase == PHASE_INIT) {
             System.err.println("sshio:setWindowSize(), sizing in init phase not supported.\n");
         }
-        if (debug > 1) System.err.println("SSHIO:setWindowSize(" + columns + "," + rows + ")");
+        if (debug > 1) {
+            System.err.println("SSHIO:setWindowSize(" + columns + "," + rows + ")");
+        }
         Send_SSH_CMSG_WINDOW_SIZE(columns, rows);
     }
 
     synchronized public void sendData(String str) throws IOException {
-        if (debug > 1) System.out.println("SshIO.send(" + str + ")");
-        if (dataToSend == null)
+        if (debug > 1) {
+            System.out.println("SshIO.send(" + str + ")");
+        }
+        if (dataToSend == null) {
             dataToSend = str;
-        else
+        } else {
             dataToSend += str;
+        }
         if (cansenddata) {
             Send_SSH_CMSG_STDIN_DATA(dataToSend);
             dataToSend = null;
@@ -225,13 +235,14 @@ public abstract class SshIO {
      * <p>
      * Returns an array of bytes that will be displayed.
      */
-    public byte[] handleSSH(byte buff[])
+    public byte[] handleSSH(byte[] buff)
             throws IOException {
         byte[] rest;
         String result;
 
-        if (debug > 1)
-            System.out.println("SshIO.getPacket(" + buff + "," + buff.length + ")");
+        if (debug > 1) {
+            System.out.println("SshIO.getPacket(" + Arrays.toString(buff) + "," + buff.length + ")");
+        }
 
 
         if (phase == PHASE_INIT) {
@@ -245,18 +256,20 @@ public abstract class SshIO {
                 // followed by newline character(ascii 10 = '\n' or '\r')
                 idstr += (char) b;
                 if (b == '\n') {
-                    if (!idstr.substring(0, 4).equals("SSH-")) {
+                    if (!"SSH-".equals(idstr.substring(0, 4))) {
                         // we need to ignore lines of data that precede the idstr
-                        if (debug > 0)
+                        if (debug > 0) {
                             System.out.print("Received data line: " + idstr);
+                        }
                         idstr = "";
                         continue;
                     }
                     phase++;
                     remotemajor = Integer.parseInt(idstr.substring(4, 5));
                     String minorverstr = idstr.substring(6, 8);
-                    if (!Character.isDigit(minorverstr.charAt(1)))
+                    if (!Character.isDigit(minorverstr.charAt(1))) {
                         minorverstr = minorverstr.substring(0, 1);
+                    }
                     remoteminor = Integer.parseInt(minorverstr);
 
                     System.out.println("remotemajor " + remotemajor);
@@ -281,14 +294,16 @@ public abstract class SshIO {
                     idstr_sent = "SSH-" + mymajor + "." + myminor + "-" + idstr_sent;
                     write(idstr_sent.getBytes());
 
-                    if (useprotocol == 2)
+                    if (useprotocol == 2) {
                         currentpacket = new SshPacket2(null);
-                    else
+                    } else {
                         currentpacket = new SshPacket1(null);
+                    }
                 }
             }
-            if (boffset == buff.length)
+            if (boffset == buff.length) {
                 return "".getBytes();
+            }
             return "Must not have left over data after PHASE_INIT!\n".getBytes();
         }
 
@@ -359,7 +374,7 @@ public abstract class SshIO {
             case SSH2_MSG_KEXINIT: {
                 byte[] fupp;
                 System.out.println("SSH2: SSH2_MSG_KEXINIT");
-                byte kexcookie[] = p.getBytes(16); // unused.
+                byte[] kexcookie = p.getBytes(16); // unused.
 
                 String kexalgs = p.getString();
                 System.out.println("- " + kexalgs);
@@ -431,7 +446,7 @@ public abstract class SshIO {
            */
                 String keytype = p.getString();
                 System.out.println("KEXDH: " + keytype);
-                if (keytype.equals("ssh-rsa")) {
+                if ("ssh-rsa".equals(keytype)) {
                     rsa_e = p.getMpInt();
                     rsa_n = p.getMpInt();
                     result = "\n\rSSH-RSA (" + rsa_n + "," + rsa_e + ")\n\r";
@@ -450,7 +465,7 @@ public abstract class SshIO {
                 int siglen = p.getInt32();
                 String sigstr = p.getString();
                 result += "Signature: ktype is " + sigstr + "\r\n";
-                byte sigdata[] = p.getBytes(p.getInt32());
+                byte[] sigdata = p.getBytes(p.getInt32());
 
                 return result;
             }
@@ -468,8 +483,9 @@ public abstract class SshIO {
 
         //we have to deal with data....
 
-        if (debug > 0)
+        if (debug > 0) {
             System.out.println("1 packet to handle, type " + p.getType());
+        }
 
 
         switch (p.getType()) {
@@ -512,8 +528,9 @@ public abstract class SshIO {
                         host_key_public_modulus, supported_ciphers_mask,
                         server_key_public_exponent, host_key_public_exponent
                 );
-                if (ret != null)
+                if (ret != null) {
                     return ret;
+                }
 
                 // we check if MD5(server_key_public_exponent) is equals to the
                 // applet parameter if any .
@@ -527,7 +544,7 @@ public abstract class SshIO {
                         int[] v = new int[2];
                         v[0] = (aMd5_hostKey & 240) >> 4;
                         v[1] = (aMd5_hostKey & 15);
-                        for (int j = 0; j < 1; j++)
+                        for (int j = 0; j < 1; j++) {
                             switch (v[j]) {
                                 case 10:
                                     hex += "a";
@@ -551,6 +568,7 @@ public abstract class SshIO {
                                     hex += String.valueOf(v[j]);
                                     break;
                             }
+                        }
                         hashHostKeyBis = hashHostKeyBis + hex;
                     }
                     //we compare the 2 values
@@ -567,8 +585,9 @@ public abstract class SshIO {
                 break;
 
             case SSH_SMSG_SUCCESS:
-                if (debug > 0)
+                if (debug > 0) {
                     System.out.println("SSH_SMSG_SUCCESS (last packet was " + lastPacketSentType + ")");
+                }
                 if (lastPacketSentType == SSH_CMSG_SESSION_KEY) {
                     //we have succefully sent the session key !! (at last :-) )
                     Send_SSH_CMSG_USER();
@@ -583,8 +602,9 @@ public abstract class SshIO {
 
                 if (lastPacketSentType == SSH_CMSG_AUTH_PASSWORD) {// password correct !!!
                     //yahoo
-                    if (debug > 0)
+                    if (debug > 0) {
                         System.out.println("login succesful");
+                    }
 
                     //now we have to start the interactive session ...
                     Send_SSH_CMSG_REQUEST_PTY(); //request a pseudo-terminal
@@ -608,7 +628,9 @@ public abstract class SshIO {
                 break;
 
             case SSH_SMSG_FAILURE:
-                if (debug > 1) System.err.println("SSH_SMSG_FAILURE");
+                if (debug > 1) {
+                    System.err.println("SSH_SMSG_FAILURE");
+                }
                 if (lastPacketSentType == SSH_CMSG_AUTH_PASSWORD) {// password incorrect ???
                     System.out.println("failed to log in");
                     Send_SSH_MSG_DISCONNECT("Failed to log in.");
@@ -751,8 +773,9 @@ public abstract class SshIO {
                 }
             }
         }
-        if (debug > 0)
+        if (debug > 0) {
             System.out.println("SshIO: Using " + cipher_type + " blockcipher.\n");
+        }
 
 
         // 	anti_spoofing_cookie : the same
@@ -823,7 +846,9 @@ public abstract class SshIO {
      * string   user login name on server
      */
     private String Send_SSH_CMSG_USER() throws IOException {
-        if (debug > 0) System.err.println("Send_SSH_CMSG_USER(" + login + ")");
+        if (debug > 0) {
+            System.err.println("Send_SSH_CMSG_USER(" + login + ")");
+        }
 
         SshPacket1 p = new SshPacket1(SSH_CMSG_USER);
         p.putString(login);

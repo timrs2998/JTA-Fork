@@ -38,7 +38,7 @@ package de.mud.ssh;
  * @version $Id: SshWrapperExample.java 499 2005-09-29 08:24:54Z leo $
  */
 public class SshWrapperExample {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         SshWrapper ssh = new SshWrapper();
         try {
             byte[] buffer = new byte[256];

@@ -46,7 +46,9 @@ public class TerminalTypeRequest implements PluginMessage {
     public Object firePluginMessage(PluginListener pl) {
         if (pl instanceof TerminalTypeListener) {
             Object ret = ((TerminalTypeListener) pl).getTerminalType();
-            if (ret != null) return ret;
+            if (ret != null) {
+                return ret;
+            }
         }
         return null;
     }

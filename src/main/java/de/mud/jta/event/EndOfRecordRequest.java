@@ -49,8 +49,9 @@ public class EndOfRecordRequest implements PluginMessage {
      * @return always null
      */
     public Object firePluginMessage(PluginListener pl) {
-        if (pl instanceof EndOfRecordListener)
+        if (pl instanceof EndOfRecordListener) {
             ((EndOfRecordListener) pl).EndOfRecord();
+        }
         return null;
     }
 }

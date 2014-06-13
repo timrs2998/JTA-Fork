@@ -34,15 +34,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A capture plugin that captures data and stores it in a
@@ -70,7 +69,7 @@ public class Capture extends Plugin
     private final static boolean personalJava = false;
 
     // for debugging output
-    private final static int debug = 0;
+    private final static Logger logger = Logger.getLogger(Capture.class.getName());
 
     /**
      * The remote storage URL
@@ -91,9 +90,9 @@ public class Capture extends Plugin
     protected boolean captureEnabled = false;
 
     // menu entries and the viewing frame/textarea
-    private JMenuItem start, stop, clear;
-    private JFrame frame;
-    private JTextArea textArea;
+    private final JMenuItem start, stop, clear;
+    private final JFrame frame;
+    private final JTextArea textArea;
     private JTextField fileName;
 
     /**
@@ -143,7 +142,11 @@ public class Capture extends Plugin
             ActionListener saveFileListener = e -> {
                 String params = (String) remoteUrlList.get("URL.file.params.orig");
                 params = params == null ? "" : params + "&";
-                remoteUrlList.put("URL.file.params", params + "file=" + URLEncoder.encode(fileName.getText()));
+                try {
+                    remoteUrlList.put("URL.file.params", params + "file=" + URLEncoder.encode(fileName.getText(), "UTF-8"));
+                } catch (UnsupportedEncodingException e1) {
+                    logger.log(Level.SEVERE, e1.toString(), e1);
+                }
                 saveFile("URL.file");
                 fileDialog.setVisible(false);
             };
@@ -165,7 +168,7 @@ public class Capture extends Plugin
             start = new JMenuItem("Start");
             start.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (debug > 0) System.out.println("Capture: start capturing");
+                    logger.warning("Capture: start capturing");
                     captureEnabled = true;
                     start.setEnabled(false);
                     stop.setEnabled(true);
@@ -176,7 +179,7 @@ public class Capture extends Plugin
             stop = new JMenuItem("Stop");
             stop.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (debug > 0) System.out.println("Capture: stop capturing");
+                    logger.warning("Capture: stop capturing");
                     captureEnabled = false;
                     start.setEnabled(true);
                     stop.setEnabled(false);
@@ -189,7 +192,7 @@ public class Capture extends Plugin
             clear = new JMenuItem("Clear");
             clear.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (debug > 0) System.out.println("Capture: cleared captured text");
+                    logger.warning("Capture: cleared captured text");
                     textArea.setText("");
                 }
             });
@@ -199,13 +202,11 @@ public class Capture extends Plugin
             JMenuItem view = new JMenuItem("View/Hide Text");
             view.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (debug > 0) System.out.println("view/hide text: " + frame.isVisible());
+                    logger.fine("view/hide text: " + frame.isVisible());
                     if (frame.isVisible()) {
                         frame.setVisible(false);
-                        frame.hide();
                     } else {
                         frame.setVisible(true);
-                        frame.show();
                     }
                 }
             });
@@ -273,10 +274,9 @@ public class Capture extends Plugin
 
     public void actionPerformed(ActionEvent e) {
         String urlID = e.getActionCommand();
-        if (debug > 0)
-            System.err.println("Capture: storing text: "
-                    + urlID + ": "
-                    + remoteUrlList.get(urlID));
+        logger.fine("Capture: storing text: "
+                + urlID + ": "
+                + remoteUrlList.get(urlID));
         saveFile(urlID);
     }
 
@@ -301,14 +301,14 @@ public class Capture extends Plugin
             // send the data to the url receiver ...
             out = new DataOutputStream(urlConnection.getOutputStream());
             String content = (String) remoteUrlList.get(urlID + ".params");
-            content = (content == null ? "" : content + "&") + "content=" + URLEncoder.encode(textArea.getText());
-            if (debug > 0) System.err.println("Capture: " + content);
+            content = (content == null ? "" : content + "&") + "content=" + URLEncoder.encode(textArea.getText(), "UTF-8");
+            logger.warning("Capture: " + content);
             out.writeBytes(content);
             out.flush();
             out.close();
 
             // retrieve response from the remote host and display it.
-            if (debug > 0) System.err.println("Capture: reading response");
+            logger.warning("Capture: reading response");
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String str;
             while (null != ((str = in.readLine()))) {
@@ -328,7 +328,7 @@ public class Capture extends Plugin
             errorDialog.pack();
             errorDialog.setVisible(true);
         }
-        if (debug > 0) System.err.println("Capture: storage complete: " + url);
+        logger.warning("Capture: storage complete: " + url);
     }
 
     // this is where we get the data from (left side in plugins list)
@@ -341,7 +341,7 @@ public class Capture extends Plugin
      * @param source the next plugin
      */
     public void setFilterSource(FilterPlugin source) {
-        if (debug > 0) System.err.println("Capture: connected to: " + source);
+        logger.warning("Capture: connected to: " + source);
         this.source = source;
     }
 

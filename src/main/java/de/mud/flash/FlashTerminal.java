@@ -36,10 +36,11 @@ import org.jdom.output.XMLOutputter;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FlashTerminal implements VDUDisplay, Runnable {
-    private final static int debug = 0;
+    private final static Logger logger = Logger.getLogger(FlashTerminal.class.getName());
 
     private boolean simpleMode = true;
     private boolean terminalReady = false;
@@ -64,12 +65,13 @@ public class FlashTerminal implements VDUDisplay, Runnable {
 
     public void start(Socket flashSocket) {
         try {
-            if (debug > 0) System.err.println("FlashTerminal: got connection: " + flashSocket);
+            logger.warning("FlashTerminal: got connection: " + flashSocket);
             writer = new BufferedWriter(new OutputStreamWriter(flashSocket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(flashSocket.getInputStream()));
             (new Thread(this)).run();
         } catch (IOException e) {
-            System.err.println("FlashTerminal: unable to accept connection: " + e);
+            logger.severe("FlashTerminal: unable to accept connection.");
+            logger.log(Level.SEVERE, e.toString(), e);
         }
     }
 
@@ -87,17 +89,15 @@ public class FlashTerminal implements VDUDisplay, Runnable {
      * @param msg message from the flash client
      */
     private void perf(String msg) {
-        System.err.print(System.currentTimeMillis());
-        System.err.println(" " + msg);
+        logger.log(Level.WARNING, String.valueOf(System.currentTimeMillis() + msg));
     }
 
     public void run() {
-        char buf[] = new char[1024];
+        char[] buf = new char[1024];
         int n = 0;
         do {
             try {
-                if (debug > 0)
-                    System.err.println("FlashTerminal: waiting for keyboard input ...");
+                logger.fine("FlashTerminal: waiting for keyboard input ...");
 
                 // read from flash frontend
                 n = reader.read(buf);
@@ -105,14 +105,14 @@ public class FlashTerminal implements VDUDisplay, Runnable {
                     handleXMLCommand(new String(buf, 0, n - 1));
                     continue;
                 }
-                if (debug > 0)
-                    System.err.println("FlashTerminal: got " + n + " keystokes: " + (n > 0 ? new String(buf, 0, n) : ""));
+
+                logger.fine("FlashTerminal: got " + n + " keystokes: " + (n > 0 ? new String(buf, 0, n) : ""));
 
                 if (n > 0 && (buffer instanceof VDUInput)) {
                     if (simpleMode) {
                         // in simple mode simply write the data to the remote host
                         // we have to convert the chars to bytes ...
-                        byte tmp[] = new byte[n];
+                        byte[] tmp = new byte[n];
                         for (int i = 0; i < n - 1; i++) {
                             tmp[i] = (byte) buf[i];
                         }
@@ -125,10 +125,11 @@ public class FlashTerminal implements VDUDisplay, Runnable {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("FlashTerminal: i/o exception reading keyboard input");
+                logger.log(Level.SEVERE, "FlashTerminal: i/o exception reading keyboard input");
+                logger.log(Level.SEVERE, e.toString(), e);
             }
         } while (n >= 0);
-        if (debug > 0) System.err.println("FlashTerminal: end of keyboard input");
+        logger.fine("FlashTerminal: end of keyboard input");
         disconnect();
     }
 
@@ -140,7 +141,7 @@ public class FlashTerminal implements VDUDisplay, Runnable {
      * @param xml string containing the xml commands
      */
     private void handleXMLCommand(String xml) throws IOException {
-        System.err.println("handleXMLCommand(" + xml + ")");
+        logger.fine("handleXMLCommand(" + xml + ")");
         StringReader src = new StringReader("<root>" + xml.replace('\0', ' ') + "</root>");
         try {
             Element root = builder.build(src).getRootElement();
@@ -158,7 +159,8 @@ public class FlashTerminal implements VDUDisplay, Runnable {
                 }
             }
         } catch (JDOMException e) {
-            System.err.println("error reading command: " + e);
+            logger.log(Level.SEVERE, "Error reading command");
+            logger.log(Level.SEVERE, e.toString(), e);
         }
     }
 
@@ -170,8 +172,7 @@ public class FlashTerminal implements VDUDisplay, Runnable {
      * Redraw terminal (send new/changed terminal lines to flash frontend).
      */
     public void redraw() {
-        if (debug > 0)
-            System.err.println("FlashTerminal: redraw()");
+        logger.fine("FlashTerminal: redraw()");
 
         if (terminalReady && writer != null) {
             try {
@@ -184,7 +185,7 @@ public class FlashTerminal implements VDUDisplay, Runnable {
 
                 if (simpleMode) {
                     Element result = redrawSimpleTerminal(terminal);
-                    if (result.getChildren().size() > 0) {
+                    if (!result.getChildren().isEmpty()) {
                         xmlOutputter.output(result, writer);
                     }
                 } else {
@@ -192,10 +193,10 @@ public class FlashTerminal implements VDUDisplay, Runnable {
                 }
                 writer.write(0);
                 writer.flush();
-                if (debug > 0)
-                    System.err.println("FlashTerminal: flushed data ...");
+                logger.fine("FlashTerminal: flushed data ...");
             } catch (IOException e) {
-                System.err.println("FlashTerminal: error writing to client: " + e);
+                logger.log(Level.SEVERE, "FlashTerminal: error writing to client");
+                logger.log(Level.SEVERE, e.toString(), e);
                 writer = null;
             }
         }
@@ -221,8 +222,9 @@ public class FlashTerminal implements VDUDisplay, Runnable {
         // then dive into the screen area ...
         while (checkPoint < buffer.bufSize) {
             int line = checkPoint - (buffer.screenBase - 1);
-            if (line > buffer.getCursorRow())
+            if (line > buffer.getCursorRow()) {
                 break;
+            }
             terminal.addContent(redrawLine(0, checkPoint++));
         }
         // update scroll marker
@@ -241,7 +243,9 @@ public class FlashTerminal implements VDUDisplay, Runnable {
     private Element redrawFullTerminal(Element terminal) {
         // cycle through buffer and create terminal update ...
         for (int l = 0; l < buffer.height; l++) {
-            if (!buffer.update[0] && !buffer.update[l + 1]) continue;
+            if (!buffer.update[0] && !buffer.update[l + 1]) {
+                continue;
+            }
             buffer.update[l + 1] = false;
             terminal.addContent(redrawLine(l, buffer.windowBase));
         }
@@ -282,14 +286,17 @@ public class FlashTerminal implements VDUDisplay, Runnable {
                 Text text = new Text(tmp.replace(' ', (char) 160));
                 Element chunk = null;
                 if ((currAttr & 0xfff) != 0) {
-                    if ((currAttr & VDUBuffer.BOLD) != 0)
+                    if ((currAttr & VDUBuffer.BOLD) != 0) {
                         chunk = addChunk(new Element("B"), chunk, text);
-                    if ((currAttr & VDUBuffer.UNDERLINE) != 0)
+                    }
+                    if ((currAttr & VDUBuffer.UNDERLINE) != 0) {
                         chunk = addChunk(new Element("U"), chunk, text);
-                    if ((currAttr & VDUBuffer.INVERT) != 0)
+                    }
+                    if ((currAttr & VDUBuffer.INVERT) != 0) {
                         chunk = addChunk(new Element("I"), chunk, text);
-                    if ((currAttr & buffer.COLOR_FG) != 0) {
-                        String fg = color[((currAttr & buffer.COLOR_FG) >> 4) - 1];
+                    }
+                    if ((currAttr & VDUBuffer.COLOR_FG) != 0) {
+                        String fg = color[((currAttr & VDUBuffer.COLOR_FG) >> 4) - 1];
                         Element font = new Element("FONT").setAttribute("COLOR", fg);
                         chunk = addChunk(font, chunk, text);
                     }
@@ -319,10 +326,11 @@ public class FlashTerminal implements VDUDisplay, Runnable {
      * @return a new chunk made up from the element
      */
     private Element addChunk(Element el, Element chunk, Text text) {
-        if (chunk == null)
+        if (chunk == null) {
             return el.addContent(text);
-        else
+        } else {
             return el.addContent(chunk);
+        }
     }
 
     /**

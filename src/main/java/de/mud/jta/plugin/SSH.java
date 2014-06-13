@@ -31,9 +31,9 @@ import de.mud.ssh.SshIO;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Secure Shell plugin for the JTA. This is a plugin
@@ -138,7 +138,7 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
                     frame.add("South", panel);
 
                     frame.pack();
-                    frame.show();
+                    frame.setVisible(true);
                     frame.setLocation(frame.getToolkit().getScreenSize().width / 2 -
                                     frame.getSize().width / 2,
                             frame.getToolkit().getScreenSize().height / 2 -
@@ -163,7 +163,9 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
     }
 
     public void setFilterSource(FilterPlugin source) {
-        if (debug > 0) System.err.println("ssh: connected to: " + source);
+        if (debug > 0) {
+            System.err.println("ssh: connected to: " + source);
+        }
         this.source = source;
     }
 
@@ -171,7 +173,7 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
         return source;
     }
 
-    private byte buffer[];
+    private byte[] buffer;
     private int pos;
 
     /**
@@ -185,10 +187,12 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
      */
     public int read(byte[] b) throws IOException {
         // we don't want to read from the pipeline without authorization
-        while (!auth) try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!auth) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // Empty the buffer before we do anything else
@@ -198,8 +202,9 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
             System.arraycopy(buffer, pos, b, 0, amount);
             if (pos + amount < buffer.length) {
                 pos += amount;
-            } else
+            } else {
                 buffer = null;
+            }
             return amount;
         }
 
@@ -211,12 +216,14 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
             pos = 0;
             buffer = handler.handleSSH(tmp);
 
-            if (debug > 0 && buffer != null && buffer.length > 0)
-                System.err.println("ssh: " + buffer);
+            if (debug > 0 && buffer != null && buffer.length > 0) {
+                System.err.println("ssh: " + Arrays.toString(buffer));
+            }
 
             if (buffer != null && buffer.length > 0) {
-                if (debug > 0)
+                if (debug > 0) {
                     System.err.println("ssh: incoming=" + n + " now=" + buffer.length);
+                }
                 int amount = buffer.length <= b.length ? buffer.length : b.length;
                 System.arraycopy(buffer, 0, b, 0, amount);
                 pos = n = amount;
@@ -224,8 +231,9 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
                     buffer = null;
                     pos = 0;
                 }
-            } else
+            } else {
                 return 0;
+            }
         }
         return n;
     }
@@ -239,7 +247,9 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
      */
     public void write(byte[] b) throws IOException {
         // no write until authorization is done
-        if (!auth) return;
+        if (!auth) {
+            return;
+        }
         for (int i = 0; i < b.length; i++) {
             switch (b[i]) {
                 case 10: /* \n -> \r */

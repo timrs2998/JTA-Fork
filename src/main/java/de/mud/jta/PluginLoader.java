@@ -75,8 +75,9 @@ public class PluginLoader implements PluginBus {
         if (path == null) {
             PATH = new Vector();
             PATH.addElement("de.mud.jta.plugin");
-        } else
+        } else {
             PATH = path;
+        }
     }
 
     /**
@@ -92,8 +93,9 @@ public class PluginLoader implements PluginBus {
         Plugin plugin = loadPlugin(name, id);
 
         // if it was not found, try without a path as a last resort
-        if (plugin == null)
+        if (plugin == null) {
             plugin = loadPlugin(null, name, id);
+        }
 
         // nothing found, tell the user
         if (plugin == null) {
@@ -103,9 +105,10 @@ public class PluginLoader implements PluginBus {
 
         // configure the filter plugins
         if (plugin instanceof FilterPlugin) {
-            if (filter.size() > 0)
+            if (!filter.isEmpty()) {
                 ((FilterPlugin) plugin)
                         .setFilterSource((FilterPlugin) filter.get(filter.size() - 1));
+            }
             filter.add(plugin);
         }
 
@@ -181,8 +184,9 @@ public class PluginLoader implements PluginBus {
             plugin = (Plugin) cc.newInstance(this, id);
             return plugin;
         } catch (ClassNotFoundException ce) {
-            if (debug > 0)
+            if (debug > 0) {
                 System.err.println("plugin loader: plugin not found: " + fullClassName);
+            }
         } catch (Exception e) {
             System.err.println("plugin loader: can't load plugin: " + fullClassName);
             e.printStackTrace();
@@ -213,13 +217,17 @@ public class PluginLoader implements PluginBus {
      * @return the answer to the sent message
      */
     public Object broadcast(PluginMessage message) {
-        if (debug > 0) System.err.println("broadcast(" + message + ")");
-        if (message == null || listener == null)
+        if (debug > 0) {
+            System.err.println("broadcast(" + message + ")");
+        }
+        if (message == null || listener == null) {
             return null;
+        }
         Enumeration e = listener.elements();
         Object res = null;
-        while (res == null && e.hasMoreElements())
+        while (res == null && e.hasMoreElements()) {
             res = message.firePluginMessage((PluginListener) e.nextElement());
+        }
         return res;
     }
 

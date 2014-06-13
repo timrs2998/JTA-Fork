@@ -81,9 +81,10 @@ public class BSXScene extends BSXObject {
      * @return -1 object not in this scene, 0..7 layer of the object
      */
     public int layerOfObject(String id) {
-        for (int layer = 0; layer < layers.length; layer++)
+        for (int layer = 0; layer < layers.length; layer++) {
             if (layers[layer].contains(id))
                 return layer;
+        }
         return -1;
     }
 
@@ -107,8 +108,9 @@ public class BSXScene extends BSXObject {
      */
     public void removeObject(String id) {
         int layer;
-        if (-1 != (layer = layerOfObject(id)))
+        if (-1 != (layer = layerOfObject(id))) {
             removeObject(id, layer);
+        }
     }
 
     /**
@@ -120,8 +122,9 @@ public class BSXScene extends BSXObject {
     public Point locateObject(String id) {
         int layer;
         layer = layerOfObject(id);
-        if (layer != -1)
+        if (layer != -1) {
             return (Point) positions[layer].elementAt(layers[layer].indexOf(id));
+        }
         return null;
     }
 
@@ -174,7 +177,7 @@ public class BSXScene extends BSXObject {
                 int px, py;
                 px = data[polys][2 * points + 1] * 2;
                 py = data[polys][2 * points + 2];
-                poly[2 * polys + 0][points] = px;
+                poly[(2 * polys)][points] = px;
                 poly[2 * polys + 1][points] = 256 - py;
             }
             g.fillPolygon(poly[2 * polys],

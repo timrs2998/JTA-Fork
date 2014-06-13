@@ -39,7 +39,7 @@ public class SshPacket1 extends SshPacket {
     private byte[] padding = null;
     private final byte[] crc_array = new byte[4];
     private byte[] block = null;
-    private byte[] encryptedBlock = null;                            // encrypted part (Padding + Type + Data + Check)
+    private final byte[] encryptedBlock = null;                            // encrypted part (Padding + Type + Data + Check)
     private byte[] decryptedBlock = null;                            // decrypted part (Padding + Type + Data + Check)
 
     private SshCrypto crypto = null;
@@ -72,7 +72,8 @@ public class SshPacket1 extends SshPacket {
     public void putMpInt(BigInteger bi) {
         byte[] mpbytes = bi.toByteArray(), xbytes;
         int i;
-        for (i = 0; (i < mpbytes.length) && (mpbytes[i] == 0); i++) /* EMPTY */ ;
+        for (i = 0; (i < mpbytes.length) && (mpbytes[i] == 0); i++) /* EMPTY */ {
+        }
         xbytes = new byte[mpbytes.length - i];
         System.arraycopy(mpbytes, i, xbytes, 0, mpbytes.length - i);
         putInt16(xbytes.length * 8);
@@ -83,10 +84,11 @@ public class SshPacket1 extends SshPacket {
         byte[] data = getData();
 
         //packet length
-        if (data != null)
+        if (data != null) {
             packet_length = data.length + 5;
-        else
+        } else {
             packet_length = 5;
+        }
         packet_length_array[3] = (byte) (packet_length & 0xff);
         packet_length_array[2] = (byte) ((packet_length >> 8) & 0xff);
         packet_length_array[1] = (byte) ((packet_length >> 16) & 0xff);
@@ -95,11 +97,13 @@ public class SshPacket1 extends SshPacket {
         //padding
         padding = new byte[(8 - (packet_length % 8))];
         if (crypto == null) {
-            for (int i = 0; i < padding.length; i++)
+            for (int i = 0; i < padding.length; i++) {
                 padding[i] = 0;
+            }
         } else {
-            for (int i = 0; i < padding.length; i++)
+            for (int i = 0; i < padding.length; i++) {
                 padding[i] = SshMisc.getNotZeroRandomByte();
+            }
         }
 
         //Compute the crc of [ Padding, Packet type, Data ]
@@ -121,8 +125,9 @@ public class SshPacket1 extends SshPacket {
         System.arraycopy(crc_array, 0, block, offset, 4);
 
         //encrypt
-        if (crypto != null)
+        if (crypto != null) {
             block = crypto.encrypt(block);
+        }
         byte[] full = new byte[block.length + 4];
         System.arraycopy(packet_length_array, 0, full, 0, 4);
         System.arraycopy(block, 0, full, 4, block.length);
@@ -136,7 +141,7 @@ public class SshPacket1 extends SshPacket {
 
     public byte[] addPayload(byte[] buff) {
         int boffset = 0;
-        byte newbuf[] = null;
+        byte[] newbuf = null;
 
         while (boffset < buff.length) {
             switch (phase_packet) {
@@ -167,8 +172,9 @@ public class SshPacket1 extends SshPacket {
                     if (block.length > position) {
                         if (boffset < buff.length) {
                             int amount = buff.length - boffset;
-                            if (amount > block.length - position)
+                            if (amount > block.length - position) {
                                 amount = block.length - position;
+                            }
                             System.arraycopy(buff, boffset, block, position, amount);
                             boffset += amount;
                             position += amount;
@@ -185,16 +191,19 @@ public class SshPacket1 extends SshPacket {
                         int padding_length = 8 - (packet_length % 8);
                         padding = new byte[padding_length];
 
-                        if (crypto != null)
+                        if (crypto != null) {
                             decryptedBlock = crypto.decrypt(block);
-                        else
+                        } else {
                             decryptedBlock = block;
+                        }
 
-                        if (decryptedBlock.length != padding_length + packet_length)
+                        if (decryptedBlock.length != padding_length + packet_length) {
                             System.out.println("???");
+                        }
 
-                        for (int i = 0; i < padding.length; i++)
+                        for (int i = 0; i < padding.length; i++) {
                             padding[i] = decryptedBlock[blockOffset++];
+                        }
 
                         //packet type
                         setType(decryptedBlock[blockOffset++]);
@@ -205,14 +214,17 @@ public class SshPacket1 extends SshPacket {
                             data = new byte[packet_length - 5];
                             System.arraycopy(decryptedBlock, blockOffset, data, 0, packet_length - 5);
                             blockOffset += packet_length - 5;
-                        } else
+                        } else {
                             data = null;
+                        }
                         putData(data);
                         //crc
-                        for (int i = 0; i < crc_array.length; i++)
+                        for (int i = 0; i < crc_array.length; i++) {
                             crc_array[i] = decryptedBlock[blockOffset++];
-                        if (!checkCrc())
+                        }
+                        if (!checkCrc()) {
                             System.err.println("SshPacket1: CRC wrong in received packet!");
+                        }
 
                         return newbuf;
                     }
@@ -238,10 +250,18 @@ public class SshPacket1 extends SshPacket {
             System.err.println(crc_arrayCheck[1] + " == " + crc_array[1]);
             System.err.println(crc_arrayCheck[0] + " == " + crc_array[0]);
         }
-        if (crc_arrayCheck[3] != crc_array[3]) return false;
-        if (crc_arrayCheck[2] != crc_array[2]) return false;
-        if (crc_arrayCheck[1] != crc_array[1]) return false;
-        if (crc_arrayCheck[0] != crc_array[0]) return false;
+        if (crc_arrayCheck[3] != crc_array[3]) {
+            return false;
+        }
+        if (crc_arrayCheck[2] != crc_array[2]) {
+            return false;
+        }
+        if (crc_arrayCheck[1] != crc_array[1]) {
+            return false;
+        }
+        if (crc_arrayCheck[0] != crc_array[0]) {
+            return false;
+        }
         return true;
     }
 } //class

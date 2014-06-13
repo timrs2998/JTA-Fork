@@ -27,7 +27,6 @@ package de.mud.jta.event;
 import de.mud.jta.PluginListener;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 /**
  * The socket listener should be implemented by plugins that want to know

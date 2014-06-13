@@ -28,7 +28,6 @@ package de.mud.jta.plugin;
 import de.mud.jta.FilterPlugin;
 import de.mud.jta.Plugin;
 import de.mud.jta.PluginBus;
-import de.mud.jta.PluginConfig;
 import de.mud.jta.event.ConfigurationListener;
 import de.mud.jta.event.SocketListener;
 import de.mud.jta.event.SocketRequest;
@@ -96,7 +95,7 @@ public class Timeout extends Plugin
         while (timeoutThread != null) {
             try {
                 ok = false;
-                timeoutThread.sleep(1000 * timeout);
+                Thread.sleep(1000 * timeout);
             } catch (InterruptedException e) {
                 ok = true;
             }
@@ -124,7 +123,9 @@ public class Timeout extends Plugin
                     });
                     grace.start();
                 } else // if not graceful exit exists, be rude
+                {
                     bus.broadcast(new SocketRequest());
+                }
             }
         }
     }
@@ -162,12 +163,16 @@ public class Timeout extends Plugin
 
     public int read(byte[] b) throws IOException {
         int n = source.read(b);
-        if (n > 0 && timeoutThread != null) timeoutThread.interrupt();
+        if (n > 0 && timeoutThread != null) {
+            timeoutThread.interrupt();
+        }
         return n;
     }
 
     public void write(byte[] b) throws IOException {
         source.write(b);
-        if (timeoutThread != null) timeoutThread.interrupt();
+        if (timeoutThread != null) {
+            timeoutThread.interrupt();
+        }
     }
 }

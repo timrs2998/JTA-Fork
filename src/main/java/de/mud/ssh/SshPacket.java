@@ -72,10 +72,18 @@ abstract class SshPacket {
         short d2 = byteArray[offset++];
         short d3 = byteArray[offset++];
 
-        if (d0 < 0) d0 = (short) (256 + d0);
-        if (d1 < 0) d1 = (short) (256 + d1);
-        if (d2 < 0) d2 = (short) (256 + d2);
-        if (d3 < 0) d3 = (short) (256 + d3);
+        if (d0 < 0) {
+            d0 = (short) (256 + d0);
+        }
+        if (d1 < 0) {
+            d1 = (short) (256 + d1);
+        }
+        if (d2 < 0) {
+            d2 = (short) (256 + d2);
+        }
+        if (d3 < 0) {
+            d3 = (short) (256 + d3);
+        }
 
         return (d0 << 24) + (d1 << 16) + (d2 << 8) + d3;
     }
@@ -84,8 +92,12 @@ abstract class SshPacket {
         short d0 = byteArray[offset++];
         short d1 = byteArray[offset++];
 
-        if (d0 < 0) d0 = (short) (256 + d0);
-        if (d1 < 0) d1 = (short) (256 + d1);
+        if (d0 < 0) {
+            d0 = (short) (256 + d0);
+        }
+        if (d1 < 0) {
+            d1 = (short) (256 + d1);
+        }
 
         return (d0 << 8) + d1;
     }
@@ -95,10 +107,11 @@ abstract class SshPacket {
 
         String str = "";
         for (int i = 0; i < length; i++) {
-            if (byteArray[offset] >= 0)
+            if (byteArray[offset] >= 0) {
                 str += (char) (byteArray[offset++]);
-            else
+            } else {
                 str += (char) (256 + byteArray[offset++]);
+            }
         }
         return str;
     }
@@ -134,7 +147,7 @@ abstract class SshPacket {
         byteArray[boffset + 3] = (byte) ((xint) & 0xff);
         byteArray[boffset + 2] = (byte) ((xint >> 8) & 0xff);
         byteArray[boffset + 1] = (byte) ((xint >> 16) & 0xff);
-        byteArray[boffset + 0] = (byte) ((xint >> 24) & 0xff);
+        byteArray[boffset] = (byte) ((xint >> 24) & 0xff);
     }
 
     public void putByte(byte xbyte) {

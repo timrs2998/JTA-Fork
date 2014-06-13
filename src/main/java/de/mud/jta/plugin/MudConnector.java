@@ -27,15 +27,12 @@ package de.mud.jta.plugin;
 
 import de.mud.jta.Plugin;
 import de.mud.jta.PluginBus;
-import de.mud.jta.PluginConfig;
 import de.mud.jta.VisualPlugin;
 import de.mud.jta.event.ConfigurationListener;
 import de.mud.jta.event.ReturnFocusListener;
 import de.mud.jta.event.SocketRequest;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -108,7 +105,9 @@ public class MudConnector
         }
 
         private void redraw() {
-            if (backingStore == null || text == null) return;
+            if (backingStore == null || text == null) {
+                return;
+            }
             Graphics g = backingStore.getGraphics();
             int width = (int) (((float) current / (float) max) * getSize().width);
             g.fill3DRect(0, 0, getSize().width, getSize().height, false);
@@ -130,11 +129,13 @@ public class MudConnector
         }
 
         public void adjust(int value, String name) {
-            if ((current = value) > max)
+            if ((current = value) > max) {
                 current = max;
+            }
             text = name;
-            if (((float) current / (float) step) == current / step)
+            if (((float) current / (float) step) == current / step) {
                 redraw();
+            }
         }
 
         public void setSize(int width, int height) {
@@ -178,8 +179,9 @@ public class MudConnector
             try {
                 step = Integer.parseInt(sstep);
             } catch (Exception e) {
-                if (sstep != null)
+                if (sstep != null) {
                     MudConnector.this.error("warning: " + sstep + " is not a number");
+                }
                 step = 10;
             }
         });
@@ -219,7 +221,7 @@ public class MudConnector
             list.ensureIndexIsVisible(list.getSelectedIndex());
             String item = (String) list.getSelectedValue();
             mudName.setText(item);
-            Object mud[] = (Object[]) mudList.get(item);
+            Object[] mud = (Object[]) mudList.get(item);
             mudAddr.setText((String) mud[0]);
             mudPort.setText(mud[1].toString());
         });
@@ -230,8 +232,9 @@ public class MudConnector
     }
 
     private void setup() {
-        if (mudList == null && listURL != null)
+        if (mudList == null && listURL != null) {
             (new Thread(this)).start();
+        }
     }
 
     public void run() {
@@ -263,26 +266,29 @@ public class MudConnector
             Integer port;
             int token, counter = 0, idx = 0;
 
-            while ((token = ts.nextToken()) != ts.TT_EOF) {
+            while ((token = ts.nextToken()) != StreamTokenizer.TT_EOF) {
                 name = ts.sval;
 
-                if ((token = ts.nextToken()) != ts.TT_EOF) {
-                    if (token == ts.TT_EOL)
+                if ((token = ts.nextToken()) != StreamTokenizer.TT_EOF) {
+                    if (token == StreamTokenizer.TT_EOL) {
                         error(name + ": unexpected end of line"
                                 + ", missing host and port");
+                    }
                     host = ts.sval;
                     port = 23;
-                    if ((token = ts.nextToken()) != ts.TT_EOF)
+                    if ((token = ts.nextToken()) != StreamTokenizer.TT_EOF) {
                         try {
-                            if (token == ts.TT_EOL)
+                            if (token == StreamTokenizer.TT_EOL)
                                 error(name + ": default port 23");
                             port = new Integer(ts.sval);
                         } catch (NumberFormatException nfe) {
                             error("port for " + name + ": " + nfe);
                         }
+                    }
 
-                    if (debug > 0)
+                    if (debug > 0) {
                         error(name + " [" + host + "," + port + "]");
+                    }
                     mudList.put(name, new Object[]{host, port, idx++});
                     progress.adjust(++counter, name);
                     mudListPanel.repaint();
@@ -298,8 +304,9 @@ public class MudConnector
                     item.addActionListener(MudConnector.this);
                     subMenu.add(item);
                 }
-                while (token != ts.TT_EOF && token != ts.TT_EOL)
+                while (token != StreamTokenizer.TT_EOF && token != StreamTokenizer.TT_EOL) {
                     token = ts.nextToken();
+                }
             }
             List list = new ArrayList(mudList.keySet());
             Collections.sort(list);
@@ -319,7 +326,7 @@ public class MudConnector
             int idx = (Integer) ((Object[]) mudList.get(item))[2];
             mudListSelector.setSelectedIndex(idx);
             mudName.setText(item);
-            Object mud[] = (Object[]) mudList.get(item);
+            Object[] mud = (Object[]) mudList.get(item);
             mudAddr.setText((String) mud[0]);
             mudPort.setText(mud[1].toString());
         }
@@ -328,8 +335,9 @@ public class MudConnector
         String port = mudPort.getText();
         if (addr != null) {
             bus.broadcast(new SocketRequest());
-            if (port == null || port.length() <= 0)
+            if (port == null || port.length() <= 0) {
                 port = "23";
+            }
             bus.broadcast(new SocketRequest(addr, Integer.parseInt(port)));
         }
     }

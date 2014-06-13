@@ -91,17 +91,23 @@ public class Script extends Plugin implements FilterPlugin {
                         Script.this.error("@file not implemented yet");
                     }
                     // parse the script and set up
-                    if (debug > 0) Script.this.error(s);
-                    String pair[] = null;
+                    if (debug > 0) {
+                        Script.this.error(s);
+                    }
+                    String[] pair = null;
                     int old = -1, idx = s.indexOf('|');
                     while (idx >= 0) {
                         if (pair == null) {
                             pair = new String[2];
                             pair[0] = s.substring(old + 1, idx);
-                            if (debug > 0) System.out.print("match(" + pair[0] + ") -> ");
+                            if (debug > 0) {
+                                System.out.print("match(" + pair[0] + ") -> ");
+                            }
                         } else {
                             pair[1] = s.substring(old + 1, idx) + "\n";
-                            if (debug > 0) System.out.print(pair[1]);
+                            if (debug > 0) {
+                                System.out.print(pair[1]);
+                            }
                             savedScript.addElement(pair);
                             pair = null;
                         }
@@ -111,9 +117,12 @@ public class Script extends Plugin implements FilterPlugin {
                     if (pair != null) {
                         pair[1] = s.substring(old + 1) + "\n";
                         savedScript.addElement(pair);
-                        if (debug > 0) System.out.print(pair[1]);
-                    } else
+                        if (debug > 0) {
+                            System.out.print(pair[1]);
+                        }
+                    } else {
                         Script.this.error("unmatched pairs of script elements");
+                    }
                     // set up the script
                     //  setup(savedScript);
                 }
@@ -150,7 +159,9 @@ public class Script extends Plugin implements FilterPlugin {
      */
     public int read(byte[] b) throws IOException {
         int n = source.read(b);
-        if (n > 0) match(b, n);
+        if (n > 0) {
+            match(b, n);
+        }
         return n;
     }
 
@@ -177,8 +188,9 @@ public class Script extends Plugin implements FilterPlugin {
     private void setup(Vector script) {
         // clone script to make sure we do not change the original
         this.script = (Vector) script.clone();
-        if (debug > 0)
+        if (debug > 0) {
             System.err.println("Script: script contains " + script.size() + " elements");
+        }
 
         // If the first element is empty, just send the value string.
         match = ((String[]) this.script.firstElement())[0].getBytes();
@@ -207,10 +219,13 @@ public class Script extends Plugin implements FilterPlugin {
             if (s[i] == match[matchPos]) {
                 // the whole thing matched so, return the match answer
                 // and reset to use the next match
-                if (++matchPos >= match.length)
+                if (++matchPos >= match.length) {
                     write(found());
+                }
             } else // if the current character did not match reset
+            {
                 reset();
+            }
         }
     }
 
@@ -222,7 +237,9 @@ public class Script extends Plugin implements FilterPlugin {
      * @return the answer to the found match
      */
     private byte[] found() {
-        if (debug > 0) System.err.println("Script: found '" + new String(match) + "'");
+        if (debug > 0) {
+            System.err.println("Script: found '" + new String(match) + "'");
+        }
         // we have matched the string, so remember the answer ...
         byte[] answer = ((String[]) script.firstElement())[1].getBytes();
         // remove the matched element
@@ -231,8 +248,9 @@ public class Script extends Plugin implements FilterPlugin {
         if (!script.isEmpty()) {
             match = ((String[]) script.firstElement())[0].getBytes();
             reset();
-        } else
+        } else {
             done = true;
+        }
         return answer;
     }
 

@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'de.mud.jta.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.jdom:jdom-legacy:1.1.3'
+    compile 'gnu-regexp:gnu-regexp:1.1.4'
+}

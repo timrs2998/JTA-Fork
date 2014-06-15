@@ -1,28 +1,3 @@
-/*
- * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
- *
- * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
- *
- * Please visit http://javatelnet.org/ for updates and contact.
- *
- * --LICENSE NOTICE--
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * --LICENSE NOTICE--
- *
- */
-
 package de.mud.jta.plugin;
 
 import de.mud.jta.*;
@@ -108,7 +83,7 @@ public class Capture extends Plugin
             frame = new JFrame("Java Telnet Applet: Captured Text");
             frame.getContentPane().setLayout(new BorderLayout());
             frame.getContentPane().add(textArea = new JTextArea(24, 80), BorderLayout.CENTER);
-            textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     frame.setVisible(false);

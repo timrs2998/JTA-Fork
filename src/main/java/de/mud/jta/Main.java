@@ -1,27 +1,3 @@
-/*
- * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
- *
- * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
- *
- * Please visit http://javatelnet.org/ for updates and contact.
- *
- * --LICENSE NOTICE--
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * --LICENSE NOTICE--
- *
- */
 package de.mud.jta;
 
 import de.mud.jta.event.FocusStatusListener;
@@ -38,6 +14,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <B>JTA - Telnet/SSH for the JAVA(tm) platform</B><P>
@@ -61,7 +39,7 @@ import java.util.Properties;
  */
 public class Main {
 
-    private final static int debug = 0;
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     private final static boolean personalJava = false;
 
@@ -83,7 +61,9 @@ public class Main {
             options.load(Main.class.getResourceAsStream("/default.conf"));
         } catch (IOException e) {
             System.err.println("jta: cannot load default.conf");
+            logger.log(Level.SEVERE, e.toString(), e);
         }
+
         String error = parseOptions(options, args);
         if (error != null) {
             System.err.println(error);
@@ -99,10 +79,12 @@ public class Main {
             try {
                 options.load(new URL(cfg).openStream());
             } catch (IOException e) {
+                logger.log(Level.SEVERE, e.toString(), e);
                 try {
                     options.load(new FileInputStream(cfg));
                 } catch (Exception fe) {
                     System.err.println("jta: cannot load " + cfg);
+                    logger.log(Level.SEVERE, fe.toString(), fe);
                 }
             }
         }
@@ -116,6 +98,7 @@ public class Main {
         try {
             clipboard = frame.getToolkit().getSystemClipboard();
         } catch (Exception e) {
+            logger.log(Level.SEVERE, e.toString(), e);
             System.err.println("jta: system clipboard access denied");
             System.err.println("jta: copy & paste only within the JTA");
             clipboard = new Clipboard("de.mud.jta.Main");
@@ -145,17 +128,13 @@ public class Main {
         // register a focus status listener, so we know when a plugin got focus
         setup.registerPluginListener(new FocusStatusListener() {
             public void pluginGainedFocus(Plugin plugin) {
-                if (Main.debug > 0) {
-                    System.err.println("Main: " + plugin + " got focus");
-                }
+                logger.warning("Main: " + plugin + " got focus");
                 focussedPlugin = plugin;
             }
 
             public void pluginLostFocus(Plugin plugin) {
                 // we ignore the lost focus
-                if (Main.debug > 0) {
-                    System.err.println("Main: " + plugin + " lost focus");
-                }
+                logger.warning("Main: " + plugin + " lost focus");
             }
         });
 
@@ -172,7 +151,6 @@ public class Main {
         }
 
         if (!personalJava) {
-
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
                     setup.broadcast(new SocketRequest());
@@ -276,13 +254,11 @@ public class Main {
 
         frame.setVisible(true);
 
-        if (debug > 0) {
-            System.err.println("host: '" + host + "', " + host.length());
-        }
+        logger.warning("host: '" + host + "', " + host.length());
         if (host != null && !host.isEmpty()) {
             setup.broadcast(new SocketRequest(host, Integer.parseInt(port)));
         }
-    /* make sure the focus goes somewhere to start off with */
+        /* make sure the focus goes somewhere to start off with */
         setup.broadcast(new ReturnFocusRequest());
     }
 
@@ -303,25 +279,29 @@ public class Main {
         boolean host = false, port = false;
         for (int n = 0; n < args.length; n++) {
             if ("-config".equals(args[n])) {
-                if (!args[n + 1].startsWith("-"))
+                if (!args[n + 1].startsWith("-")) {
                     options.put("Main.config", args[++n]);
-                else
+                } else {
                     return "missing parameter for -config";
+                }
             } else if ("-plugins".equals(args[n])) {
-                if (!args[n + 1].startsWith("-"))
+                if (!args[n + 1].startsWith("-")) {
                     options.put("plugins", args[++n]);
-                else
+                } else {
                     return "missing parameter for -plugins";
+                }
             } else if ("-addplugin".equals(args[n])) {
-                if (!args[n + 1].startsWith("-"))
+                if (!args[n + 1].startsWith("-")) {
                     options.put("plugins", args[++n] + "," + options.get("plugins"));
-                else
+                } else {
                     return "missing parameter for -addplugin";
+                }
             } else if ("-term".equals(args[n])) {
-                if (!args[n + 1].startsWith("-"))
+                if (!args[n + 1].startsWith("-")) {
                     options.put("Terminal.id", args[++n]);
-                else
+                } else {
                     return "missing parameter for -term";
+                }
             } else if (!host) {
                 options.put("Socket.host", args[n]);
                 host = true;

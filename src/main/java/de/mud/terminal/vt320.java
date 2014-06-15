@@ -1,28 +1,3 @@
-/*
- * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
- *
- * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
- *
- * Please visit http://javatelnet.org/ for updates and contact.
- *
- * --LICENSE NOTICE--
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * --LICENSE NOTICE--
- *
- */
-
 package de.mud.terminal;
 
 import java.awt.event.KeyEvent;
@@ -731,7 +706,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
      * @return a unescaped string
      */
     static String unEscape(String tmp) {
-        int idx = 0, oldidx = 0;
+        int idx, oldidx = 0;
         String cmd;
         // System.err.println("unescape("+tmp+")");
         cmd = "";
@@ -767,8 +742,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                     if ((tmp.charAt(idx) >= '0') && (tmp.charAt(idx) <= '9')) {
                         int i;
                         for (i = idx; i < tmp.length(); i++) {
-                            if ((tmp.charAt(i) < '0') || (tmp.charAt(i) > '9'))
+                            if ((tmp.charAt(i) < '0') || (tmp.charAt(i) > '9')) {
                                 break;
+                            }
                         }
                         cmd += (char) Integer.parseInt(tmp.substring(idx, i));
                         idx = i - 1;
@@ -1631,8 +1607,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         lastwaslf = 0;
                         if (c < 32) {
                             if (c != 0) {
-                                if (debug > 0)
+                                if (debug > 0) {
                                     System.out.println("TSTATE_DATA char: " + ((int) c));
+                                }
                             }
                 /*break; some BBS really want those characters, like hearst etc. */
                             if (c == 0) /* print 0 ... you bet */ {
@@ -2031,8 +2008,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 switch (c) {
                     case '8':
                         for (int i = 0; i < columns; i++) {
-                            for (int j = 0; j < rows; j++)
+                            for (int j = 0; j < rows; j++) {
                                 putChar(i, j, 'E', 0);
+                            }
                         }
                         break;
                     default:
@@ -2662,8 +2640,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                         if (DCEvars[0] == 0) {
                             deleteLine(R);
                         } else {
-                            for (int i = 0; i < DCEvars[0]; i++)
+                            for (int i = 0; i < DCEvars[0]; i++) {
                                 deleteLine(R);
+                            }
                         }
                         break;
                     case 'K':

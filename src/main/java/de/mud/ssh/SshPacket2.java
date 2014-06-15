@@ -114,9 +114,13 @@ public class SshPacket2 extends SshPacket {
         byte[] padding = new byte[padlen];
         System.out.println("packet length is " + packet_length + ", padlen is " + padlen);
         if (xcrypt == null) {
-            for (int i = 0; i < padlen; i++) padding[i] = 0;
+            for (int i = 0; i < padlen; i++) {
+                padding[i] = 0;
+            }
         } else {
-            for (int i = 0; i < padlen; i++) padding[i] = SshMisc.getNotZeroRandomByte();
+            for (int i = 0; i < padlen; i++) {
+                padding[i] = SshMisc.getNotZeroRandomByte();
+            }
         }
 
         // [ packetlength, padlength, padding, packet type, data ]

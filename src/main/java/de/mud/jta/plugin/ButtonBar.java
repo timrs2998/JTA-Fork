@@ -316,12 +316,13 @@ public class ButtonBar extends Plugin
                                            StreamTokenizer setup)
             throws IOException {
         if (setup.nextToken() == StreamTokenizer.TT_WORD) {
-            if ("break".equals(setup.sval))
+            if ("break".equals(setup.sval)) {
                 c.gridwidth = GridBagConstraints.REMAINDER;
-            else if ("stretch".equals(setup.sval))
+            } else if ("stretch".equals(setup.sval)) {
                 c.weightx = 1.0;
-            else
+            } else {
                 setup.pushBack();
+            }
         } else {
             setup.pushBack();
         }
@@ -450,10 +451,11 @@ public class ButtonBar extends Plugin
                         address = cmd;
                     }
                     if (address != null) {
-                        if (port != -1)
+                        if (port != -1) {
                             bus.broadcast(new SocketRequest(address, port));
-                        else
+                        } else {
                             bus.broadcast(new SocketRequest(address, 23));
+                        }
                     } else {
                         error("connect: no address");
                     }

@@ -169,10 +169,11 @@ public class URLFilter extends Plugin
                             // collect the test of the url
                             while ((token = st.nextToken()) == StreamTokenizer.TT_WORD ||
                                     token == '/') {
-                                if (token == StreamTokenizer.TT_WORD)
+                                if (token == StreamTokenizer.TT_WORD) {
                                     url += st.sval;
-                                else
+                                } else {
                                     url += (char) token;
+                                }
                             }
 
                             // urls that end with a dot are usually wrong, so cut it off

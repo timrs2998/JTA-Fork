@@ -348,25 +348,6 @@ public class SwingTerminal extends Component
 
         g.setFont(normalFont);
 
-
-    /* for debug only
-     if (update[0]) {
-         System.err.println("Redrawing all");
-     } else {
-     for (int l = 1; l < size.height+1; l++) {
-         if (update[l]) {
-             for (int c = 0; c < size.height-l;c++) {
-             if (!update[c+l]) {
-             System.err.println("Redrawing "+(l-1)+" - "+(l+c-2));
-             l=l+c;
-             break;
-             }
-         }
-         }
-     }
-     }
-     */
-
         for (int l = 0; l < buffer.height; l++) {
             if (!buffer.update[0] && !buffer.update[l + 1]) {
                 continue;
@@ -395,14 +376,6 @@ public class SwingTerminal extends Component
                     if (null != color[COLOR_BOLD]) {
                         fg = color[COLOR_BOLD];
                     }
-          /*
-          if(fg.equals(Color.black)) {
-            fg = Color.gray;
-          } else {
-            fg = brighten(fg);
-            // bg = bg.brighter(); -- make some programs ugly
-          }
-          */
                 } else {
                     g.setFont(normalFont);
                 }
@@ -922,7 +895,7 @@ public class SwingTerminal extends Component
                 end = (l == selectEnd.y ? end = selectEnd.x : buffer.charArray[l].length);
 
                 boolean newlineFound = false;
-                char ch = ' ';
+                char ch;
                 for (int i = start; i < end; i++) {
                     if ((buffer.charAttributes[l][i] & VDUBuffer.INVISIBLE) != 0) {
                         ch = ' ';

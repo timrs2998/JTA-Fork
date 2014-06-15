@@ -1,28 +1,3 @@
-/*
- * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
- *
- * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
- *
- * Please visit http://javatelnet.org/ for updates and contact.
- *
- * --LICENSE NOTICE--
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * --LICENSE NOTICE--
- *
- */
-
 package de.mud.jta.plugin;
 
 import de.mud.jta.*;
@@ -103,10 +78,11 @@ public class Terminal extends Plugin
             return (Color) colors.get(code);
         } else {
             try {
-                if (Color.getColor(code) != null)
+                if (Color.getColor(code) != null) {
                     return Color.getColor(code);
-                else
+                } else {
                     return Color.decode(code);
+                }
             } catch (Exception e) {
                 try {
                     // try one last time
@@ -397,7 +373,7 @@ public class Terminal extends Plugin
 
             if (colorSet != null) {
                 Color[] set = terminal.getColorSet();
-                Color color = null;
+                Color color;
                 for (int i = 0; i < 8; i++) {
                     if ((tmp = colorSet.getProperty("color" + i)) != null &&
                             (color = codeToColor(tmp)) != null) {
@@ -486,12 +462,13 @@ public class Terminal extends Plugin
         }
 
         if ((tmp = cfg.getProperty("Terminal", id, "resize")) != null) {
-            if ("font".equals(tmp))
+            if ("font".equals(tmp)) {
                 terminal.setResizeStrategy(SwingTerminal.RESIZE_FONT);
-            else if ("screen".equals(tmp))
+            } else if ("screen".equals(tmp)) {
                 terminal.setResizeStrategy(SwingTerminal.RESIZE_SCREEN);
-            else
+            } else {
                 terminal.setResizeStrategy(SwingTerminal.RESIZE_NONE);
+            }
         }
 
 
@@ -566,9 +543,12 @@ public class Terminal extends Plugin
         while (n >= 0) {
             try {
                 n = read(b);
-                if (debug > 1 && n > 0)
+                if (debug > 1 && n > 0) {
                     System.err.println("Terminal: \"" + (new String(b, 0, n, encoding)) + "\"");
-                if (n > 0) emulation.putString(new String(b, 0, n, encoding));
+                }
+                if (n > 0) {
+                    emulation.putString(new String(b, 0, n, encoding));
+                }
                 tPanel.repaint();
             } catch (IOException e) {
                 reader = null;

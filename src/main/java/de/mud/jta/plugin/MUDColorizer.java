@@ -175,7 +175,9 @@ public class MUDColorizer extends Plugin
         if (readprompt) {
             int index;
             for (index = buf.length - 1; index >= 0; index--) {
-                if (buf[index] == '\n') break;
+                if (buf[index] == '\n') {
+                    break;
+                }
             }
             index++;
             prompt = new byte[buf.length - index];

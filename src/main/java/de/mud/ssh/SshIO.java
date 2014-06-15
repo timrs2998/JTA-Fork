@@ -132,7 +132,8 @@ public abstract class SshIO {
     private final byte SSH2_MSG_KEXDH_INIT = 30;
     private final byte SSH2_MSG_KEXDH_REPLY = 31;
 
-    private String kexalgs, hostkeyalgs, encalgs2c, encalgc2s, macalgs2c, macalgc2s, compalgc2s, compalgs2c, langc2s, langs2;
+    private String kexalgs, hostkeyalgs, encalgs2c, encalgc2s, macalgs2c, macalgc2s, compalgc2s, compalgs2c, langc2s,
+            langs2;
 
     private int outgoingseq = 0, incomingseq = 0;
 
@@ -204,8 +205,7 @@ public abstract class SshIO {
         crypto = null;
     }
 
-    public void setWindowSize(int columns, int rows)
-            throws IOException {
+    public void setWindowSize(int columns, int rows) throws IOException {
         if (phase == PHASE_INIT) {
             System.err.println("sshio:setWindowSize(), sizing in init phase not supported.\n");
         }
@@ -235,8 +235,7 @@ public abstract class SshIO {
      * <p>
      * Returns an array of bytes that will be displayed.
      */
-    public byte[] handleSSH(byte[] buff)
-            throws IOException {
+    public byte[] handleSSH(byte[] buff) throws IOException {
         byte[] rest;
         String result;
 
@@ -340,8 +339,7 @@ public abstract class SshIO {
      * @param p the packet we will process here.
      * @return a array of bytes
      */
-    private String handlePacket2(SshPacket2 p)
-            throws IOException {
+    private String handlePacket2(SshPacket2 p) throws IOException {
         switch (p.getType()) {
             case SSH2_MSG_IGNORE:
                 System.out.println("SSH2: SSH2_MSG_IGNORE");
@@ -350,7 +348,8 @@ public abstract class SshIO {
                 int discreason = p.getInt32();
                 String discreason1 = p.getString();
         /*String discreason2 = p.getString();*/
-                System.out.println("SSH2: SSH2_MSG_DISCONNECT(" + discreason + "," + discreason1 + "," + /*discreason2+*/")");
+                System.out.println("SSH2: SSH2_MSG_DISCONNECT(" + discreason + "," + discreason1 + "," +
+                        "" + /*discreason2+*/")");
 
                 return "\nSSH2 disconnect: " + discreason1 + "\n";
 
@@ -476,8 +475,7 @@ public abstract class SshIO {
     }
 
 
-    private String handlePacket1(SshPacket1 p)
-            throws IOException { //the message to handle is data and its length is
+    private String handlePacket1(SshPacket1 p) throws IOException { //the message to handle is data and its length is
 
         byte b;        // of course, byte is a signed entity (-128 -> 127)
 
@@ -523,11 +521,9 @@ public abstract class SshIO {
                 // We have completely received the PUBLIC_KEY
                 // We prepare the answer ...
 
-                String ret = Send_SSH_CMSG_SESSION_KEY(
-                        anti_spoofing_cookie, server_key_public_modulus,
-                        host_key_public_modulus, supported_ciphers_mask,
-                        server_key_public_exponent, host_key_public_exponent
-                );
+                String ret = Send_SSH_CMSG_SESSION_KEY(anti_spoofing_cookie, server_key_public_modulus,
+                        host_key_public_modulus, supported_ciphers_mask, server_key_public_exponent,
+                        host_key_public_exponent);
                 if (ret != null) {
                     return ret;
                 }
@@ -574,12 +570,10 @@ public abstract class SshIO {
                     //we compare the 2 values
                     if (hashHostKeyBis.compareTo(hashHostKey) != 0) {
                         login = password = "";
-                        return "\nHash value of the host key not correct \r\n"
-                                + "login & password have been reset \r\n"
-                                + "- erase the 'hashHostKey' parameter in the Html\r\n"
-                                + "(it is used for auhentificating the server and "
-                                + "prevent you from connecting \r\n"
-                                + "to any other)\r\n";
+                        return "\nHash value of the host key not correct \r\n" + "login & password have been reset " +
+                                "\r\n" + "- erase the 'hashHostKey' parameter in the Html\r\n" + "(it is used for " +
+                                "auhentificating the server and " + "prevent you from connecting \r\n" + "to any " +
+                                "other)\r\n";
                     }
                 }
                 break;
@@ -715,12 +709,9 @@ public abstract class SshIO {
     // Turn the encryption on (initialise the block cipher)
     //
 
-    private String Send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie,
-                                             byte[] server_key_public_modulus,
-                                             byte[] host_key_public_modulus,
-                                             byte[] supported_ciphers_mask,
-                                             byte[] server_key_public_exponent,
-                                             byte[] host_key_public_exponent)
+    private String Send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] server_key_public_modulus,
+                                             byte[] host_key_public_modulus, byte[] supported_ciphers_mask,
+                                             byte[] server_key_public_exponent, byte[] host_key_public_exponent)
             throws IOException {
 
         String str;
@@ -734,11 +725,14 @@ public abstract class SshIO {
         //	session_id = md5(servkey->n || hostkey->n || cookie) //protocol V 1.1.(Why is it different ??)
         //
 
-        byte[] session_id_byte = new byte[host_key_public_modulus.length + server_key_public_modulus.length + anti_spoofing_cookie.length];
+        byte[] session_id_byte = new byte[host_key_public_modulus.length + server_key_public_modulus.length +
+                anti_spoofing_cookie.length];
 
         System.arraycopy(host_key_public_modulus, 0, session_id_byte, 0, host_key_public_modulus.length);
-        System.arraycopy(server_key_public_modulus, 0, session_id_byte, host_key_public_modulus.length, server_key_public_modulus.length);
-        System.arraycopy(anti_spoofing_cookie, 0, session_id_byte, host_key_public_modulus.length + server_key_public_modulus.length, anti_spoofing_cookie.length);
+        System.arraycopy(server_key_public_modulus, 0, session_id_byte, host_key_public_modulus.length,
+                server_key_public_modulus.length);
+        System.arraycopy(anti_spoofing_cookie, 0, session_id_byte, host_key_public_modulus.length +
+                server_key_public_modulus.length, anti_spoofing_cookie.length);
 
         byte[] hash_md5 = md5.digest(session_id_byte);
 
@@ -765,10 +759,12 @@ public abstract class SshIO {
                         cipher_types = (byte) SSH_CIPHER_DES;
                         cipher_type = "DES";
                     } else {
-                        System.err.println("SshIO: remote server does not supported IDEA, BlowFish or 3DES, support cypher mask is " + supported_ciphers_mask[3] + ".\n");
+                        System.err.println("SshIO: remote server does not supported IDEA, BlowFish or 3DES, " +
+                                "support cypher mask is " + supported_ciphers_mask[3] + ".\n");
                         Send_SSH_MSG_DISCONNECT("No more auth methods available.");
                         disconnect();
-                        return "\rRemote server does not support IDEA/Blowfish/3DES blockcipher, closing connection.\r\n";
+                        return "\rRemote server does not support IDEA/Blowfish/3DES blockcipher, " +
+                                "closing connection.\r\n";
                     }
                 }
             }
@@ -789,7 +785,8 @@ public abstract class SshIO {
         byte[] random_bits1 = new byte[16], random_bits2 = new byte[16];
 
 
-        /// java.util.Date date = new java.util.Date(); ////the number of milliseconds since January 1, 1970, 00:00:00 GMT.
+        /// java.util.Date date = new java.util.Date(); ////the number of milliseconds since January 1, 1970,
+        // 00:00:00 GMT.
         //Math.random()   a pseudorandom double between 0.0 and 1.0.
         // random_bits2 = random_bits1 =
         // md5.hash("" + Math.random() * (new java.util.Date()).getDate());
@@ -810,12 +807,8 @@ public abstract class SshIO {
         session_keyXored = SshMisc.addArrayOfBytes(session_keyXored, random_bits2);
 
         //We encrypt now!!
-        byte[] encrypted_session_key =
-                SshCrypto.encrypteRSAPkcs1Twice(session_keyXored,
-                        server_key_public_exponent,
-                        server_key_public_modulus,
-                        host_key_public_exponent,
-                        host_key_public_modulus);
+        byte[] encrypted_session_key = SshCrypto.encrypteRSAPkcs1Twice(session_keyXored, server_key_public_exponent,
+                server_key_public_modulus, host_key_public_exponent, host_key_public_modulus);
 
         //	protocol_flags :protocol extension   cf. page 18
         int protocol_flags = 0; /* currently 0 */

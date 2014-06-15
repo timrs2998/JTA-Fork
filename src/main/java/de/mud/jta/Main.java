@@ -8,7 +8,9 @@ import de.mud.jta.event.SocketRequest;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -56,6 +58,19 @@ public class Main {
     private static String host, port;
 
     public static void main(String[] args) {
+        // Try to set Nimus Look and Feel
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException |
+                IllegalAccessException ex) {
+            logger.log(Level.SEVERE, ex.toString(), ex);
+        }
+
         final Properties options = new Properties();
         try {
             options.load(Main.class.getResourceAsStream("/default.conf"));
@@ -67,10 +82,8 @@ public class Main {
         String error = parseOptions(options, args);
         if (error != null) {
             System.err.println(error);
-            System.err.println("usage: de.mud.jta.Main [-plugins pluginlist] "
-                    + "[-addplugin plugin] "
-                    + "[-config url_or_file] "
-                    + "[-term id] [host [port]]");
+            System.err.println("usage: de.mud.jta.Main [-plugins pluginlist] " + "[-addplugin plugin] " + "[-config " +
+                    "url_or_file] " + "[-term id] [host [port]]");
             System.exit(0);
         }
 
@@ -168,11 +181,8 @@ public class Main {
             file.add(tmp = new JMenuItem("Connect"));
             tmp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK));
             tmp.addActionListener(evt -> {
-                String destination =
-                        JOptionPane.showInputDialog(frame,
-                                new JLabel("Enter your destination host (host[:port])"),
-                                "Connect", JOptionPane.QUESTION_MESSAGE
-                        );
+                String destination = JOptionPane.showInputDialog(frame, new JLabel("Enter your destination host " +
+                        "(host[:port])"), "Connect", JOptionPane.QUESTION_MESSAGE);
                 if (destination != null) {
                     int sep = 0;
                     if ((sep = destination.indexOf(' ')) > 0 || (sep = destination.indexOf(':')) > 0) {
@@ -192,14 +202,12 @@ public class Main {
                 file.add(tmp = new JMenuItem("Print"));
                 tmp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
                 tmp.addActionListener(evt -> {
-                    PrintJob printJob =
-                            frame.getToolkit().getPrintJob(frame, "JTA Terminal", null);
+                    PrintJob printJob = frame.getToolkit().getPrintJob(frame, "JTA Terminal", null);
                     // return if the user clicked cancel
                     if (printJob == null) {
                         return;
                     }
-                    ((JComponent) setup.getComponents().get("Terminal"))
-                            .print(printJob.getGraphics());
+                    ((JComponent) setup.getComponents().get("Terminal")).print(printJob.getGraphics());
                     printJob.end();
                 });
                 file.addSeparator();

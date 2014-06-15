@@ -94,10 +94,8 @@ public class BSXCache {
         if (index != cacheSize - size) {
             int len;
             len = index - (cacheSize - size);
-            System.arraycopy(ids, cacheSize - size,
-                    ids, cacheSize - size + 1, len);
-            System.arraycopy(bsx, cacheSize - size,
-                    bsx, cacheSize - size + 1, len);
+            System.arraycopy(ids, cacheSize - size, ids, cacheSize - size + 1, len);
+            System.arraycopy(bsx, cacheSize - size, bsx, cacheSize - size + 1, len);
         } else {
             ids[cacheSize - size] = null;
             bsx[cacheSize - size] = null;
@@ -115,10 +113,8 @@ public class BSXCache {
             bsx[cacheSize - i] = null;
             ids[cacheSize - i] = null;
         }
-        System.arraycopy(ids, cacheSize - size,
-                ids, cacheSize - size + offset, cacheSize - offset);
-        System.arraycopy(bsx, cacheSize - size,
-                bsx, cacheSize - size + offset, cacheSize - offset);
+        System.arraycopy(ids, cacheSize - size, ids, cacheSize - size + offset, cacheSize - offset);
+        System.arraycopy(bsx, cacheSize - size, bsx, cacheSize - size + offset, cacheSize - offset);
         size -= offset;
     }
 

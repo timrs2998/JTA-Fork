@@ -81,8 +81,7 @@ public class PluginLoader implements PluginBus {
         // configure the filter plugins
         if (plugin instanceof FilterPlugin) {
             if (!filter.isEmpty()) {
-                ((FilterPlugin) plugin)
-                        .setFilterSource((FilterPlugin) filter.get(filter.size() - 1));
+                ((FilterPlugin) plugin).setFilterSource((FilterPlugin) filter.get(filter.size() - 1));
             }
             filter.add(plugin);
         }
@@ -154,8 +153,7 @@ public class PluginLoader implements PluginBus {
         // load the plugin by name and instantiate it
         try {
             Class c = Class.forName(fullClassName);
-            Constructor cc = c.getConstructor(new Class[]{PluginBus.class,
-                    String.class});
+            Constructor cc = c.getConstructor(new Class[]{PluginBus.class, String.class});
             plugin = (Plugin) cc.newInstance(this, id);
             return plugin;
         } catch (ClassNotFoundException ce) {

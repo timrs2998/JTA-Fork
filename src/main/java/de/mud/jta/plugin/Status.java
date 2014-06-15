@@ -80,8 +80,7 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
 
             if (config.getProperty("Status", id, "interval") != null) {
                 try {
-                    interval = Integer.parseInt(
-                            config.getProperty("Status", id, "interval"));
+                    interval = Integer.parseInt(config.getProperty("Status", id, "interval"));
                     infoThread = new Thread(Status.this);
                     infoThread.start();
                 } catch (NumberFormatException e) {
@@ -164,8 +163,7 @@ public class Status extends Plugin implements VisualPlugin, Runnable {
 
         while (url != null && infoThread != null) {
             try {
-                BufferedReader content =
-                        new BufferedReader(new InputStreamReader(url.openStream()));
+                BufferedReader content = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {
                     String line;
                     while ((line = content.readLine()) != null) {

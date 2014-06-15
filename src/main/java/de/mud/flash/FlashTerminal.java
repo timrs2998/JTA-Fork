@@ -26,15 +26,8 @@ public class FlashTerminal implements VDUDisplay, Runnable {
     /**
      * A list of colors used for representation of the display
      */
-    private final String[] color = {"#000000",
-            "#ff0000",
-            "#00ff00",
-            "#ffff00",
-            "#0000ff",
-            "#ff00ff",
-            "#00ffff",
-            "#ffffff",
-            null, // bold color
+    private final String[] color = {"#000000", "#ff0000", "#00ff00", "#ffff00", "#0000ff", "#ff00ff", "#00ffff",
+            "#ffffff", null, // bold color
             null, // inverted color
     };
 
@@ -244,9 +237,8 @@ public class FlashTerminal implements VDUDisplay, Runnable {
             int addr = 0;
             int currAttr = buffer.charAttributes[base + l][c];
 
-            while ((c + addr < buffer.width) &&
-                    ((buffer.charArray[base + l][c + addr] < ' ') ||
-                            (buffer.charAttributes[base + l][c + addr] == currAttr))) {
+            while ((c + addr < buffer.width) && ((buffer.charArray[base + l][c + addr] < ' ') || (buffer
+                    .charAttributes[base + l][c + addr] == currAttr))) {
                 if (buffer.charArray[base + l][c + addr] < ' ') {
                     buffer.charArray[base + l][c + addr] = ' ';
                     buffer.charAttributes[base + l][c + addr] = 0;

@@ -31,7 +31,7 @@ public class BSXScene extends BSXObject {
      * @return true if object is here, otherwise false
      */
     public boolean containsObject(String id) {
-        return (-1 == layerOfObject(id) ? false : true);
+        return (-1 != layerOfObject(id));
     }
 
     /**
@@ -157,9 +157,7 @@ public class BSXScene extends BSXObject {
                 poly[(2 * polys)][points] = px;
                 poly[2 * polys + 1][points] = 256 - py;
             }
-            g.fillPolygon(poly[2 * polys],
-                    poly[2 * polys + 1],
-                    poly[2 * polys].length);
+            g.fillPolygon(poly[2 * polys], poly[2 * polys + 1], poly[2 * polys].length);
         }
     }
 }

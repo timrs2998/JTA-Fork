@@ -236,15 +236,14 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             return;
         }
 
-        int mods = modifiers;
         mousebut = 3;
-        if ((mods & 16) == 16) {
+        if ((modifiers & 16) == 16) {
             mousebut = 0;
         }
-        if ((mods & 8) == 8) {
+        if ((modifiers & 8) == 8) {
             mousebut = 1;
         }
-        if ((mods & 4) == 4) {
+        if ((modifiers & 4) == 4) {
             mousebut = 2;
         }
 
@@ -252,7 +251,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         if (mouserpt == 9)	/* X10 Mouse */ {
             mousecode = 0x20 | mousebut;
         } else			/* normal xterm mouse reporting */ {
-            mousecode = mousebut | 0x20 | ((mods & 7) << 2);
+            mousecode = mousebut | 0x20 | ((modifiers & 7) << 2);
         }
 
         byte[] b = new byte[6];
@@ -603,11 +602,11 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
     // Map from scoansi linedrawing to DEC _and_ unicode (for the stuff which
     // is not in linedrawing). Got from experimenting with scoadmin.
-    private final static String scoansi_acs = "Tm7k3x4u?kZl@mYjEnB\u2566DqCtAvM\u2550:\u2551N\u2557I\u2554;\u2557H\u255a0a<\u255d";
+    private final static String scoansi_acs = "Tm7k3x4u?kZl@mYjEnB\u2566DqCtAvM\u2550:\u2551N\u2557I\u2554;" +
+            "\u2557H\u255a0a<\u255d";
     // array to store DEC Special -> Unicode mapping
     //  Unicode   DEC  Unicode name    (DEC name)
-    private static final char[] DECSPECIAL = {
-            '\u0040', //5f blank
+    private static final char[] DECSPECIAL = {'\u0040', //5f blank
             '\u2666', //60 black diamond
             '\u2592', //61 grey square
             '\u2409', //62 Horizontal tab  (ht) pict. for control
@@ -710,8 +709,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         String cmd;
         // System.err.println("unescape("+tmp+")");
         cmd = "";
-        while ((idx = tmp.indexOf('\\', oldidx)) >= 0 &&
-                ++idx <= tmp.length()) {
+        while ((idx = tmp.indexOf('\\', oldidx)) >= 0 && ++idx <= tmp.length()) {
             cmd += tmp.substring(oldidx, idx - 1);
             if (idx == tmp.length()) {
                 return cmd;
@@ -964,8 +962,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             return;
         }
 
-        if (((keyCode == KeyEvent.VK_ENTER) || (keyChar == 10))
-                && !control) {
+        if (((keyCode == KeyEvent.VK_ENTER) || (keyChar == 10)) && !control) {
             write("\r", false);
             if (localecho) {
                 putString("\r\n"); // bad hack
@@ -1126,7 +1123,6 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
         if (!((keyChar == 8) || (keyChar == 127) || (keyChar == '\r') || (keyChar == '\n'))) {
             write("" + keyChar);
-            return;
         }
     }
 
@@ -1447,7 +1443,8 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         boolean mapped = false;
 
         if (debug > 4) {
-            System.out.println("putChar(" + c + " [" + ((int) c) + "]) at R=" + R + " , C=" + C + ", columns=" + columns + ", rows=" + rows);
+            System.out.println("putChar(" + c + " [" + ((int) c) + "]) at R=" + R + " , C=" + C + ", " +
+                    "columns=" + columns + ", rows=" + rows);
         }
         markLine(R, 1);
         if (c > 255) {
@@ -2247,11 +2244,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                             output8bit = false;
                             break;
                         }
-                        if (DCEvars[1] == 1) {
-                            output8bit = false;
-                        } else {
-                            output8bit = true; /* 0 or 2 */
-                        }
+                        output8bit = DCEvars[1] != 1;
                         break;
                     default:
                         System.out.println("Unknown ESC [...  \"" + c);
@@ -2590,7 +2583,8 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             /* gets 2 arguments */
                         _SetCursor(DCEvars[0] - 1, DCEvars[1] - 1);
                         if (debug > 2) {
-                            System.out.println("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " H, moveoutsidemargins " + moveoutsidemargins);
+                            System.out.println("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " H, " +
+                                    "moveoutsidemargins " + moveoutsidemargins);
                             System.out.println("	-> R now " + R + ", C now " + C);
                         }
                         break;

@@ -19,8 +19,7 @@ import java.io.IOException;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: Timeout.java 499 2005-09-29 08:24:54Z leo $
  */
-public class Timeout extends Plugin
-        implements FilterPlugin, SocketListener, Runnable {
+public class Timeout extends Plugin implements FilterPlugin, SocketListener, Runnable {
 
     private final static int debug = 0;
 
@@ -46,13 +45,10 @@ public class Timeout extends Plugin
                 try {
                     timeout = Integer.parseInt(tos);
                 } catch (Exception e) {
-                    Timeout.this.error("timeout (" + timeout + ") "
-                            + "is not an integer, timeout disabled");
+                    Timeout.this.error("timeout (" + timeout + ") " + "is not an integer, timeout disabled");
                 }
-                timeoutCommand =
-                        config.getProperty("Timeout", id, "command");
-                timeoutWarning =
-                        config.getProperty("Timeout", id, "warning");
+                timeoutCommand = config.getProperty("Timeout", id, "command");
+                timeoutWarning = config.getProperty("Timeout", id, "warning");
             }
         });
         pluginBus = bus;

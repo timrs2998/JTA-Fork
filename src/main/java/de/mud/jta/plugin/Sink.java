@@ -17,8 +17,7 @@ import java.io.IOException;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: Sink.java 499 2005-09-29 08:24:54Z leo $
  */
-public class Sink extends Plugin
-        implements FilterPlugin, Runnable {
+public class Sink extends Plugin implements FilterPlugin, Runnable {
 
     private final static int debug = 0;
 

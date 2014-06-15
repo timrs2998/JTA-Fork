@@ -112,8 +112,7 @@ import java.util.Map;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: ButtonBar.java 499 2005-09-29 08:24:54Z leo $
  */
-public class ButtonBar extends Plugin
-        implements FilterPlugin, VisualPlugin, ActionListener, ListSelectionListener {
+public class ButtonBar extends Plugin implements FilterPlugin, VisualPlugin, ActionListener, ListSelectionListener {
 
     /**
      * the panel that contains the buttons and input fields
@@ -138,8 +137,7 @@ public class ButtonBar extends Plugin
         bus.registerPluginListener(new ConfigurationListener() {
             public void setConfiguration(PluginConfig cfg) {
                 String file = cfg.getProperty("ButtonBar", id, "setup");
-                clearFields =
-                        Boolean.valueOf(cfg.getProperty("ButtonBar", id, "clearFields"));
+                clearFields = Boolean.valueOf(cfg.getProperty("ButtonBar", id, "clearFields"));
 
                 // check for the setup file
                 if (file == null) {
@@ -239,7 +237,8 @@ public class ButtonBar extends Plugin
                                     String ident = "C" + ChoiceCount + ".";
                                     list = new JList();
                                     choices.put(list, ident);
-                                    list.addListSelectionListener(ButtonBar.this);// Choices use ItemListener, not Action
+                                    list.addListSelectionListener(ButtonBar.this);// Choices use ItemListener,
+                                    // not Action
                                     l.setConstraints(list, constraints(c, setup));
                                     panel.add(list);
                                     while ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
@@ -267,8 +266,7 @@ public class ButtonBar extends Plugin
                                 } else if ("input".equals(setup.sval)) {
                                     if ((token = setup.nextToken()) != StreamTokenizer.TT_EOF) {
                                         String descr = setup.sval;
-                                        if ((token = setup.nextToken()) ==
-                                                StreamTokenizer.TT_NUMBER) {
+                                        if ((token = setup.nextToken()) == StreamTokenizer.TT_NUMBER) {
                                             int size = (int) setup.nval;
                                             String init = "", command = "";
                                             token = setup.nextToken();
@@ -312,9 +310,7 @@ public class ButtonBar extends Plugin
         });
     }
 
-    private GridBagConstraints constraints(GridBagConstraints c,
-                                           StreamTokenizer setup)
-            throws IOException {
+    private GridBagConstraints constraints(GridBagConstraints c, StreamTokenizer setup) throws IOException {
         if (setup.nextToken() == StreamTokenizer.TT_WORD) {
             if ("break".equals(setup.sval)) {
                 c.gridwidth = GridBagConstraints.REMAINDER;
@@ -352,8 +348,7 @@ public class ButtonBar extends Plugin
     private void processEvent(String tmp) {
         String cmd = "", function = null;
         int idx = 0, oldidx = 0;
-        while ((idx = tmp.indexOf('\\', oldidx)) >= 0 &&
-                ++idx <= tmp.length()) {
+        while ((idx = tmp.indexOf('\\', oldidx)) >= 0 && ++idx <= tmp.length()) {
             cmd += tmp.substring(oldidx, idx - 1);
             switch (tmp.charAt(idx)) {
                 case 'b':
@@ -510,13 +505,11 @@ public class ButtonBar extends Plugin
     }
 
     private static boolean isKeyword(String txt) {
-        return (
-                "button".equals(txt) ||
-                        "label".equals(txt) ||
-                        "input".equals(txt) ||
-                        "stretch".equals(txt) ||
-                        "choice".equals(txt) ||
-                        "break".equals(txt)
-        );
+        return ("button".equals(txt) ||
+                "label".equals(txt) ||
+                "input".equals(txt) ||
+                "stretch".equals(txt) ||
+                "choice".equals(txt) ||
+                "break".equals(txt));
     }
 }

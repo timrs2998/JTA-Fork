@@ -20,8 +20,7 @@ public interface FilterPlugin {
      *
      * @param source the data source
      */
-    public void setFilterSource(FilterPlugin source)
-            throws IllegalArgumentException;
+    public void setFilterSource(FilterPlugin source) throws IllegalArgumentException;
 
     public FilterPlugin getFilterSource();
 
@@ -31,14 +30,12 @@ public interface FilterPlugin {
      * @param b the buffer to read the data into
      * @return the amount of bytes actually read
      */
-    public int read(byte[] b)
-            throws IOException;
+    public int read(byte[] b) throws IOException;
 
     /**
      * Write a block of data to the back end.
      *
      * @param b the buffer to be sent
      */
-    public void write(byte[] b)
-            throws IOException;
+    public void write(byte[] b) throws IOException;
 }

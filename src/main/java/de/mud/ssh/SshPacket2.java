@@ -198,11 +198,10 @@ public class SshPacket2 extends SshPacket {
                 case PHASE_packet_length:
                     packet_length_array[position++] = buff[boffset++];
                     if (position == 5) {
-                        packet_length =
-                                (packet_length_array[3] & 0xff) +
-                                        ((packet_length_array[2] & 0xff) << 8) +
-                                        ((packet_length_array[1] & 0xff) << 16) +
-                                        ((packet_length_array[0] & 0xff) << 24);
+                        packet_length = (packet_length_array[3] & 0xff) +
+                                ((packet_length_array[2] & 0xff) << 8) +
+                                ((packet_length_array[1] & 0xff) << 16) +
+                                ((packet_length_array[0] & 0xff) << 24);
                         padlen = packet_length_array[4];
                         position = 0;
                         System.out.println("SSH2: packet length " + packet_length);

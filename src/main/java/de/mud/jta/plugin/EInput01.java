@@ -20,8 +20,7 @@ import java.io.IOException;
  * @version $Id: EInput01.java 499 2005-09-29 08:24:54Z leo $
  */
 
-public class EInput01 extends Plugin
-        implements FilterPlugin, VisualPlugin {
+public class EInput01 extends Plugin implements FilterPlugin, VisualPlugin {
 
     protected final JTextArea input;
     protected final JButton send;

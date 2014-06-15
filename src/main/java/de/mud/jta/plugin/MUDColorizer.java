@@ -51,8 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Thomas Kriegelstein
  */
-public class MUDColorizer extends Plugin
-        implements FilterPlugin, EndOfRecordListener, ConfigurationListener {
+public class MUDColorizer extends Plugin implements FilterPlugin, EndOfRecordListener, ConfigurationListener {
     private static final Logger logger = Logger.getLogger(MUDColorizer.class.getName());
     private static final String BLACK = "[30m";
     private static final String RED = "[31m";
@@ -278,8 +277,7 @@ public class MUDColorizer extends Plugin
     public int read(byte[] b) throws IOException {
         // empty the buffer before reading more data
         if (buffer != null) {
-            int amount = (buffer.length - pos) <= b.length ?
-                    buffer.length - pos : b.length;
+            int amount = (buffer.length - pos) <= b.length ? buffer.length - pos : b.length;
             System.arraycopy(buffer, pos, b, 0, amount);
             if (pos + amount < buffer.length) {
                 pos += amount;

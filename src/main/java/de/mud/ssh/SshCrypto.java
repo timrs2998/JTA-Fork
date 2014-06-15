@@ -54,10 +54,8 @@ public class SshCrypto {
 
     //-------------------------------------------------------------------------
 
-    static public byte[] encrypteRSAPkcs1Twice(byte[] clearData,
-                                               byte[] server_key_public_exponent,
-                                               byte[] server_key_public_modulus,
-                                               byte[] host_key_public_exponent,
+    static public byte[] encrypteRSAPkcs1Twice(byte[] clearData, byte[] server_key_public_exponent,
+                                               byte[] server_key_public_modulus, byte[] host_key_public_exponent,
                                                byte[] host_key_public_modulus) {
 
         // At each encryption step, a multiple-precision integer is constructed
@@ -120,8 +118,7 @@ public class SshCrypto {
         while (messageByteTemp[tempOffset] == 0) {
             tempOffset++;
         }
-        for (int i = messageByte.length - messageByteTemp.length + tempOffset;
-             i < messageByte.length; i++) {
+        for (int i = messageByte.length - messageByteTemp.length + tempOffset; i < messageByte.length; i++) {
             messageByte[i] = messageByteTemp[tempOffset++];
         }
 
@@ -159,8 +156,7 @@ public class SshCrypto {
         while (messageByteTemp[tempOffset] == 0) {
             tempOffset++;
         }
-        for (int i = messageByte.length - messageByteTemp.length + tempOffset;
-             i < messageByte.length; i++) {
+        for (int i = messageByte.length - messageByteTemp.length + tempOffset; i < messageByte.length; i++) {
             messageByte[i] = messageByteTemp[tempOffset++];
         }
 

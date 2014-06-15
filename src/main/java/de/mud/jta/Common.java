@@ -27,12 +27,10 @@ public class Common extends PluginLoader {
 
         logger.log(Level.FINE, "** JTA - Telnet/SSH for the JAVA(tm) platform");
         logger.log(Level.FINE, "** Version 2.6 for Java 2+");
-        logger.log(Level.FINE, "** Copyright (c) 1996-2005 Matthias L. Jugel, "
-                + "Marcus Meissner");
+        logger.log(Level.FINE, "** Copyright (c) 1996-2005 Matthias L. Jugel, " + "Marcus Meissner");
 
         try {
-            Version build =
-                    (Version) Class.forName("de.mud.jta.Build").newInstance();
+            Version build = (Version) Class.forName("de.mud.jta.Build").newInstance();
             logger.log(Level.FINE, "** Build: " + build.getDate());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "** Build: patched or selfmade, no date");
@@ -58,15 +56,12 @@ public class Common extends PluginLoader {
                 }
                 name = name.substring(0, idx);
             }
-            logger.log(Level.FINE, "jta: loading plugin '" + name + "'"
-                    + (id != null && !id.isEmpty() ?
-                    ", ID: '" + id + "'" : ""));
+            logger.log(Level.FINE, "jta: loading plugin '" + name + "'" + (id != null && !id.isEmpty() ? ", " +
+                    "ID: '" + id + "'" : ""));
             Plugin plugin = addPlugin(name, id);
             if (plugin == null) {
-                logger.log(Level.SEVERE, "jta: ignoring plugin '" + name + "'"
-                        + (id != null && !id.isEmpty() ?
-                        ", ID: '" + id + "'" : ""));
-                continue;
+                logger.log(Level.SEVERE, "jta: ignoring plugin '" + name + "'" + (id != null && !id.isEmpty() ? ", " +
+                        "ID: '" + id + "'" : ""));
             }
         }
 

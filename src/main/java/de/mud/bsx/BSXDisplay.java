@@ -48,8 +48,7 @@ public final class BSXDisplay extends Component {
     /**
      * an empty scene (black rectangle)
      */
-    protected static final int[][] EMPTY_SCENE =
-            new int[][]{{4, 0, 0, 255, 255, 255, 255, 0, 0, 0}};
+    protected static final int[][] EMPTY_SCENE = new int[][]{{4, 0, 0, 255, 255, 255, 255, 0, 0, 0}};
 
     /**
      * @return query for scene data if not in cache

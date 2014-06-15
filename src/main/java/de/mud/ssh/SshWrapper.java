@@ -30,6 +30,7 @@ import de.mud.jta.Wrapper;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * The telnet ssh is a sample class for how to use the SSH protocol
@@ -59,10 +60,8 @@ import java.util.Arrays;
  */
 public class SshWrapper extends Wrapper {
     protected final SshIO handler;
-    /**
-     * debugging level
-     */
-    private final static int debug = 0;
+
+    private static final Logger logger = Logger.getLogger(SshWrapper.class.getName());
 
     public SshWrapper() {
         handler = new SshIO() {
@@ -135,8 +134,7 @@ public class SshWrapper extends Wrapper {
     public int read(byte[] b) throws IOException {
         // Empty the buffer before we do anything else
         if (buffer != null) {
-            int amount = ((buffer.length - pos) <= b.length) ?
-                    buffer.length - pos : b.length;
+            int amount = ((buffer.length - pos) <= b.length) ? buffer.length - pos : b.length;
             System.arraycopy(buffer, pos, b, 0, amount);
             if (pos + amount < buffer.length) {
                 pos += amount;
@@ -153,14 +151,13 @@ public class SshWrapper extends Wrapper {
             System.arraycopy(b, 0, tmp, 0, n);
             pos = 0;
             buffer = handler.handleSSH(tmp);
-            if (debug > 0 && buffer != null && buffer.length > 0) {
-                System.err.println("ssh: " + Arrays.toString(buffer));
+            if (buffer != null && buffer.length > 0) {
+                logger.warning("ssh: " + Arrays.toString(buffer));
             }
 
             if (buffer != null && buffer.length > 0) {
-                if (debug > 0) {
-                    System.err.println("ssh: incoming=" + n + " now=" + buffer.length);
-                }
+                logger.warning("ssh: incoming=" + n + " now=" + buffer.length);
+
                 int amount = buffer.length <= b.length ? buffer.length : b.length;
                 System.arraycopy(buffer, 0, b, 0, amount);
                 pos = n = amount;

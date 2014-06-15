@@ -32,17 +32,15 @@ public class Help {
                 helpText.setPage(new URL(url));
             } catch (Exception ee) {
                 System.err.println("unable to load help");
-                JOptionPane.showMessageDialog(parent, "JTA - Telnet/SSH for the JAVA(tm) platform\r\n(c) 1996-2005 Matthias L. Jugel, Marcus Meißner\r\n\r\n",
-                        "jta", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "JTA - Telnet/SSH for the JAVA(tm) platform\r\n(c) 1996-2005 " +
+                        "Matthias L. Jugel, Marcus Meißner\r\n\r\n", "jta", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
         }
         helpText.setEditable(false);
 
-        JScrollPane scrollPane =
-                new JScrollPane(helpText,
-                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(helpText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setSize(800, 600);
 
         final JFrame frame = new JFrame("HELP");

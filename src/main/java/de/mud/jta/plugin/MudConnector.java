@@ -55,9 +55,7 @@ import java.util.List;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: MudConnector.java 499 2005-09-29 08:24:54Z leo $
  */
-public class MudConnector
-        extends Plugin
-        implements VisualPlugin, Runnable, ActionListener {
+public class MudConnector extends Plugin implements VisualPlugin, Runnable, ActionListener {
 
     /**
      * debugging level
@@ -115,15 +113,10 @@ public class MudConnector
             g.fill3DRect(0, 0, width, getSize().height, true);
             g.setColor(getForeground());
             g.setXORMode(getBackground());
-            String percent = "" + (current * 100 / (max > 0 ? max : 1))
-                    + "% / " + current + " of " + max;
-            g.drawString(percent,
-                    getSize().width / 2 -
-                            getFontMetrics(getFont()).stringWidth(percent) / 2,
+            String percent = "" + (current * 100 / (max > 0 ? max : 1)) + "% / " + current + " of " + max;
+            g.drawString(percent, getSize().width / 2 - getFontMetrics(getFont()).stringWidth(percent) / 2,
                     getSize().height / 2);
-            g.drawString(text,
-                    getSize().width / 2 -
-                            getFontMetrics(getFont()).stringWidth(text) / 2,
+            g.drawString(text, getSize().width / 2 - getFontMetrics(getFont()).stringWidth(text) / 2,
                     getSize().height / 2 + 12);
             paint(getGraphics());
         }
@@ -159,8 +152,7 @@ public class MudConnector
         super(bus, id);
 
         bus.registerPluginListener((ConfigurationListener) config -> {
-            String url =
-                    config.getProperty("MudConnector", id, "listURL");
+            String url = config.getProperty("MudConnector", id, "listURL");
             if (url != null) {
                 try {
                     listURL = new URL(url);
@@ -243,8 +235,7 @@ public class MudConnector
             Map menuList = new HashMap();
 
             mudList = new HashMap();
-            BufferedReader r =
-                    new BufferedReader(new InputStreamReader(listURL.openStream()));
+            BufferedReader r = new BufferedReader(new InputStreamReader(listURL.openStream()));
 
             String line = r.readLine();
             int mudCount = 0;
@@ -271,15 +262,15 @@ public class MudConnector
 
                 if ((token = ts.nextToken()) != StreamTokenizer.TT_EOF) {
                     if (token == StreamTokenizer.TT_EOL) {
-                        error(name + ": unexpected end of line"
-                                + ", missing host and port");
+                        error(name + ": unexpected end of line" + ", missing host and port");
                     }
                     host = ts.sval;
                     port = 23;
                     if ((token = ts.nextToken()) != StreamTokenizer.TT_EOF) {
                         try {
-                            if (token == StreamTokenizer.TT_EOL)
+                            if (token == StreamTokenizer.TT_EOL) {
                                 error(name + ": default port 23");
+                            }
                             port = new Integer(ts.sval);
                         } catch (NumberFormatException nfe) {
                             error("port for " + name + ": " + nfe);

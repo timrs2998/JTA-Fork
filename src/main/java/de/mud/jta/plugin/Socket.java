@@ -19,8 +19,7 @@ import java.io.OutputStream;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: Socket.java 499 2005-09-29 08:24:54Z leo $
  */
-public class Socket extends Plugin
-        implements FilterPlugin, SocketListener {
+public class Socket extends Plugin implements FilterPlugin, SocketListener {
 
     private final static int debug = 0;
 
@@ -41,12 +40,10 @@ public class Socket extends Plugin
         bus.registerPluginListener(this);
 
         bus.registerPluginListener((ConfigurationListener) config -> {
-            if ((relay = config.getProperty("Socket", id, "relay"))
-                    != null) {
+            if ((relay = config.getProperty("Socket", id, "relay")) != null) {
                 if (config.getProperty("Socket", id, "relayPort") != null) {
                     try {
-                        relayPort = Integer.parseInt(
-                                config.getProperty("Socket", id, "relayPort"));
+                        relayPort = Integer.parseInt(config.getProperty("Socket", id, "relayPort"));
                     } catch (NumberFormatException e) {
                         Socket.this.error("relayPort is not a number");
                     }

@@ -1,6 +1,9 @@
 package de.mud.jta.plugin;
 
-import de.mud.jta.*;
+import de.mud.jta.FilterPlugin;
+import de.mud.jta.Plugin;
+import de.mud.jta.PluginBus;
+import de.mud.jta.VisualPlugin;
 import de.mud.jta.event.*;
 import de.mud.ssh.SshIO;
 
@@ -9,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * Secure Shell plugin for the JTA. This is a plugin
@@ -30,7 +34,7 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
 
     protected String user, pass;
 
-    private final static int debug = 0;
+    private static final Logger logger = Logger.getLogger(SSH.class.getName());
 
     private boolean auth = false;
 
@@ -114,10 +118,8 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
 
                     frame.pack();
                     frame.setVisible(true);
-                    frame.setLocation(frame.getToolkit().getScreenSize().width / 2 -
-                                    frame.getSize().width / 2,
-                            frame.getToolkit().getScreenSize().height / 2 -
-                                    frame.getSize().height / 2);
+                    frame.setLocation(frame.getToolkit().getScreenSize().width / 2 - frame.getSize().width / 2,
+                            frame.getToolkit().getScreenSize().height / 2 - frame.getSize().height / 2);
                     if (user != null) {
                         passw.requestFocus();
                     }
@@ -138,9 +140,7 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
     }
 
     public void setFilterSource(FilterPlugin source) {
-        if (debug > 0) {
-            System.err.println("ssh: connected to: " + source);
-        }
+        logger.warning("ssh: connected to: " + source);
         this.source = source;
     }
 
@@ -172,8 +172,7 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
 
         // Empty the buffer before we do anything else
         if (buffer != null) {
-            int amount = ((buffer.length - pos) <= b.length) ?
-                    buffer.length - pos : b.length;
+            int amount = ((buffer.length - pos) <= b.length) ? buffer.length - pos : b.length;
             System.arraycopy(buffer, pos, b, 0, amount);
             if (pos + amount < buffer.length) {
                 pos += amount;
@@ -191,14 +190,13 @@ public class SSH extends Plugin implements FilterPlugin, VisualPlugin {
             pos = 0;
             buffer = handler.handleSSH(tmp);
 
-            if (debug > 0 && buffer != null && buffer.length > 0) {
+            if (buffer != null && buffer.length > 0) {
                 System.err.println("ssh: " + Arrays.toString(buffer));
             }
 
             if (buffer != null && buffer.length > 0) {
-                if (debug > 0) {
-                    System.err.println("ssh: incoming=" + n + " now=" + buffer.length);
-                }
+                logger.warning("ssh: incoming=" + n + " now=" + buffer.length);
+
                 int amount = buffer.length <= b.length ? buffer.length : b.length;
                 System.arraycopy(buffer, 0, b, 0, amount);
                 pos = n = amount;

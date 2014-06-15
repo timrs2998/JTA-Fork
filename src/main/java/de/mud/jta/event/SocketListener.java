@@ -22,6 +22,5 @@ public interface SocketListener extends PluginListener {
     /**
      * Called if the connection should be stopped.
      */
-    public void disconnect()
-            throws IOException;
+    public void disconnect() throws IOException;
 }

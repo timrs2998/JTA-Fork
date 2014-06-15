@@ -25,7 +25,10 @@
 
 package de.mud.jta.plugin;
 
-import de.mud.jta.*;
+import de.mud.jta.FilterPlugin;
+import de.mud.jta.Plugin;
+import de.mud.jta.PluginBus;
+import de.mud.jta.VisualPlugin;
 import de.mud.jta.event.AppletListener;
 import de.mud.jta.event.ConfigurationListener;
 
@@ -43,8 +46,7 @@ import java.util.Vector;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: URLFilter.java 499 2005-09-29 08:24:54Z leo $
  */
-public class URLFilter extends Plugin
-        implements FilterPlugin, VisualPlugin, Runnable {
+public class URLFilter extends Plugin implements FilterPlugin, VisualPlugin, Runnable {
 
     /**
      * debugging level
@@ -144,8 +146,7 @@ public class URLFilter extends Plugin
 
     public void run() {
         try {
-            StreamTokenizer st =
-                    new StreamTokenizer(new BufferedReader(new InputStreamReader(pin)));
+            StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(pin)));
             st.eolIsSignificant(true);
             st.slashSlashComments(false);
             st.slashStarComments(false);
@@ -167,8 +168,7 @@ public class URLFilter extends Plugin
                         if (st.nextToken() == ':' && st.nextToken() == '/') {
                             String url = word + ":/";
                             // collect the test of the url
-                            while ((token = st.nextToken()) == StreamTokenizer.TT_WORD ||
-                                    token == '/') {
+                            while ((token = st.nextToken()) == StreamTokenizer.TT_WORD || token == '/') {
                                 if (token == StreamTokenizer.TT_WORD) {
                                     url += st.sval;
                                 } else {

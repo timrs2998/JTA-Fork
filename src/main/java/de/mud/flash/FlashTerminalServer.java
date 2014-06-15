@@ -119,7 +119,8 @@ public class FlashTerminalServer implements Runnable {
             /** write data to our back end */
             public void write(byte[] b) throws IOException {
                 if (debug > 0) {
-                    System.err.println("FlashTerminalServer: writing " + Integer.toHexString(b[0]) + " " + new String(b));
+                    System.err.println("FlashTerminalServer: writing " + Integer.toHexString(b[0]) + " " + new String
+                            (b));
                 }
                 os.write(b);
             }

@@ -29,8 +29,7 @@ public class TelnetClient {
         new TelnetClient(System.in, System.out, host, port);
     }
 
-    public TelnetClient(InputStream in, PrintStream out,
-                        String host, int port) {
+    public TelnetClient(InputStream in, PrintStream out, String host, int port) {
         TelnetWrapper telnetWrapper = new TelnetWrapper();
         try {
             telnetWrapper.connect(host, port);
@@ -54,7 +53,6 @@ public class TelnetClient {
         } catch (IOException e) {
             System.out.println("TelnetClient: Got exception in read/write loop: " + e);
             e.printStackTrace();
-            return;
         } finally {
             try {
                 telnetWrapper.disconnect();
@@ -94,8 +92,7 @@ public class TelnetClient {
         }
     }
 
-    public Thread createAndStartReader(TelnetWrapper telnetWrapper,
-                                       PrintStream out) {
+    public Thread createAndStartReader(TelnetWrapper telnetWrapper, PrintStream out) {
         ReaderThread readerThread = new ReaderThread(telnetWrapper, out);
         readerThread.start();
         return readerThread;

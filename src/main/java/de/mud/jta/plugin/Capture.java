@@ -1,6 +1,9 @@
 package de.mud.jta.plugin;
 
-import de.mud.jta.*;
+import de.mud.jta.FilterPlugin;
+import de.mud.jta.Plugin;
+import de.mud.jta.PluginBus;
+import de.mud.jta.VisualPlugin;
 import de.mud.jta.event.ConfigurationListener;
 
 import javax.swing.*;
@@ -37,8 +40,7 @@ import java.util.logging.Logger;
  * @author Matthias L. Jugel, Marcus Mei�ner
  * @version $Id: Capture.java 499 2005-09-29 08:24:54Z leo $
  */
-public class Capture extends Plugin
-        implements FilterPlugin, VisualPlugin, ActionListener {
+public class Capture extends Plugin implements FilterPlugin, VisualPlugin, ActionListener {
 
     // this enables or disables the compilation of menu entries
     private final static boolean personalJava = false;
@@ -65,7 +67,8 @@ public class Capture extends Plugin
     protected boolean captureEnabled = false;
 
     // menu entries and the viewing frame/textarea
-    private final JMenuItem start, stop, clear;
+    private final JMenuItem start;
+    private final JMenuItem stop;
     private final JFrame frame;
     private final JTextArea textArea;
     private JTextField fileName;
@@ -118,7 +121,8 @@ public class Capture extends Plugin
                 String params = (String) remoteUrlList.get("URL.file.params.orig");
                 params = params == null ? "" : params + "&";
                 try {
-                    remoteUrlList.put("URL.file.params", params + "file=" + URLEncoder.encode(fileName.getText(), "UTF-8"));
+                    remoteUrlList.put("URL.file.params", params + "file=" + URLEncoder.encode(fileName.getText(),
+                            "UTF-8"));
                 } catch (UnsupportedEncodingException e1) {
                     logger.log(Level.SEVERE, e1.toString(), e1);
                 }
@@ -164,7 +168,7 @@ public class Capture extends Plugin
             stop.setEnabled(false);
             menu.add(stop);
 
-            clear = new JMenuItem("Clear");
+            JMenuItem clear = new JMenuItem("Clear");
             clear.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     logger.warning("Capture: cleared captured text");
@@ -249,9 +253,7 @@ public class Capture extends Plugin
 
     public void actionPerformed(ActionEvent e) {
         String urlID = e.getActionCommand();
-        logger.fine("Capture: storing text: "
-                + urlID + ": "
-                + remoteUrlList.get(urlID));
+        logger.fine("Capture: storing text: " + urlID + ": " + remoteUrlList.get(urlID));
         saveFile(urlID);
     }
 
@@ -276,7 +278,8 @@ public class Capture extends Plugin
             // send the data to the url receiver ...
             out = new DataOutputStream(urlConnection.getOutputStream());
             String content = (String) remoteUrlList.get(urlID + ".params");
-            content = (content == null ? "" : content + "&") + "content=" + URLEncoder.encode(textArea.getText(), "UTF-8");
+            content = (content == null ? "" : content + "&") + "content=" + URLEncoder.encode(textArea.getText(),
+                    "UTF-8");
             logger.warning("Capture: " + content);
             out.writeBytes(content);
             out.flush();

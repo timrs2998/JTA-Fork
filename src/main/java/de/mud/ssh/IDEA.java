@@ -149,8 +149,8 @@ public final class IDEA extends Cipher {
 
         for (i = 8, j = 0; i < 52; i++) {
             j++;
-            key_schedule[ki + j + 7] = ((key_schedule[ki + (j & 7)] << 9) |
-                    (key_schedule[ki + ((j + 1) & 7)] >>> 7)) & 0xffff;
+            key_schedule[ki + j + 7] = ((key_schedule[ki + (j & 7)] << 9) | (key_schedule[ki + ((j + 1) & 7)] >>> 7))
+                    & 0xffff;
             ki += j & 8;
             j &= 7;
         }
@@ -199,7 +199,7 @@ public final class IDEA extends Cipher {
         encrypt(l, r, out);
     }
 
-    public static final int mulop(int a, int b) {
+    public static int mulop(int a, int b) {
         int ab = a * b;
         if (ab != 0) {
             int lo = ab & 0xffff;

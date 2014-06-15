@@ -22,8 +22,7 @@ import java.io.IOException;
  * @author Thomas Kriegelstein (tk4@rb.mud.de)
  * @version Java 1.0
  */
-public class BSX extends Plugin
-        implements FilterPlugin, VisualPlugin {
+public class BSX extends Plugin implements FilterPlugin, VisualPlugin {
 
     /**
      * the canvas that contains the Gfx
@@ -257,11 +256,9 @@ public class BSX extends Plugin
                                 state = 4;
                             } else { // Empty BSX is "00"
                                 if (equals(cmd, DFS)) {
-                                    visual.defineScene(obj,
-                                            data);
+                                    visual.defineScene(obj, data);
                                 } else if (equals(cmd, DFO)) {
-                                    visual.defineObject(obj,
-                                            data);
+                                    visual.defineObject(obj, data);
                                 }
                                 reset();
                             }
@@ -312,11 +309,9 @@ public class BSX extends Plugin
                                 pos = 0;
                                 if (poly == polys) {
                                     if (equals(cmd, DFS)) {
-                                        visual.defineScene(obj,
-                                                data);
+                                        visual.defineScene(obj, data);
                                     } else if (equals(cmd, DFO)) {
-                                        visual.defineObject(obj,
-                                                data);
+                                        visual.defineObject(obj, data);
                                     }
                                     reset();
                                 }

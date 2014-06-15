@@ -39,7 +39,8 @@ public class SshPacket1 extends SshPacket {
     private byte[] padding = null;
     private final byte[] crc_array = new byte[4];
     private byte[] block = null;
-    private final byte[] encryptedBlock = null;                            // encrypted part (Padding + Type + Data + Check)
+    private final byte[] encryptedBlock = null;                            // encrypted part (Padding + Type + Data +
+    // Check)
     private byte[] decryptedBlock = null;                            // decrypted part (Padding + Type + Data + Check)
 
     private SshCrypto crypto = null;
@@ -154,11 +155,10 @@ public class SshPacket1 extends SshPacket {
                 case PHASE_packet_length:
                     packet_length_array[position++] = buff[boffset++];
                     if (position >= 4) {
-                        packet_length =
-                                (packet_length_array[3] & 0xff) +
-                                        ((packet_length_array[2] & 0xff) << 8) +
-                                        ((packet_length_array[1] & 0xff) << 16) +
-                                        ((packet_length_array[0] & 0xff) << 24);
+                        packet_length = (packet_length_array[3] & 0xff) +
+                                ((packet_length_array[2] & 0xff) << 8) +
+                                ((packet_length_array[1] & 0xff) << 16) +
+                                ((packet_length_array[0] & 0xff) << 24);
                         position = 0;
                         phase_packet++;
                         block = new byte[8 * (packet_length / 8 + 1)];
@@ -259,9 +259,6 @@ public class SshPacket1 extends SshPacket {
         if (crc_arrayCheck[1] != crc_array[1]) {
             return false;
         }
-        if (crc_arrayCheck[0] != crc_array[0]) {
-            return false;
-        }
-        return true;
+        return crc_arrayCheck[0] == crc_array[0];
     }
 } //class

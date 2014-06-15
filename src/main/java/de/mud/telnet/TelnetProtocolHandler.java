@@ -40,11 +40,6 @@ import java.io.IOException;
  */
 public abstract class TelnetProtocolHandler {
     /**
-     * contains the current revision id
-     */
-    public final static String ID = "$Id: TelnetProtocolHandler.java 503 2005-10-24 07:34:13Z marcus $";
-
-    /**
      * debug level
      */
     private final static int debug = 0;
@@ -260,8 +255,7 @@ public abstract class TelnetProtocolHandler {
     /**
      * Send a Telnet Escape character (IAC <code>)
      */
-    public void sendTelnetControl(byte code)
-            throws IOException {
+    public void sendTelnetControl(byte code) throws IOException {
         byte[] b = new byte[2];
 
         b[0] = IAC;
@@ -272,8 +266,7 @@ public abstract class TelnetProtocolHandler {
     /**
      * Send the new Window Size (via NAWS)
      */
-    public void setWindowSize(int columns, int rows)
-            throws IOException {
+    public void setWindowSize(int columns, int rows) throws IOException {
         if (debug > 2) {
             System.err.println("sending NAWS");
         }
@@ -300,8 +293,7 @@ public abstract class TelnetProtocolHandler {
      * @param type  type of SB
      * @param sbata byte array as &lt;bytes&gt;
      */
-    private void handle_sb(byte type, byte[] sbdata)
-            throws IOException {
+    private void handle_sb(byte type, byte[] sbdata) throws IOException {
         if (debug > 1) {
             System.err.println("TelnetIO.handle_sb(" + type + ")");
         }
@@ -419,8 +411,7 @@ public abstract class TelnetProtocolHandler {
      * @param nbuf the byte buffer put out after negotiation
      * @return number of bytes processed, 0 for none, and -1 for end of buffer.
      */
-    public int negotiate(byte[] nbuf)
-            throws IOException {
+    public int negotiate(byte[] nbuf) throws IOException {
         int count = tempbuf.length;
         byte[] buf = tempbuf;
         byte[] sendbuf = new byte[3];
